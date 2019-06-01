@@ -1,0 +1,34 @@
+/*******************************************************************************
+ * Copyright 2017 See AUTHORS file.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package com.cyphercove.flexbatch.utils;
+
+import com.badlogic.gdx.math.Vector3;
+import com.cyphercove.flexbatch.Batchable;
+
+/** A 3D Batchable that can be sorted by {@link BatchableSorter}.
+ * @param <T> The type must match the class that implements this. */
+public interface SortableBatchable<T extends Batchable> {
+	/** @return Whether this Batchable is opaque. */
+	boolean isOpaque ();
+
+	/** @return The squared distance from the given camera position. */
+	float calculateDistanceSquared (Vector3 camPosition);
+
+	/** @param other Another instance of the same class type as this one, for comparison.
+	 * @return Whether this Batchable and the other have the same texture configuration such that they could be drawn sequentially
+	 *         without forcing the FlexBatch to flush in between. */
+	public abstract boolean hasEquivalentTextures (T other);
+}

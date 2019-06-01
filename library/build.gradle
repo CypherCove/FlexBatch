@@ -1,0 +1,75 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id "com.jfrog.bintray" version "1.8.4"
+}
+
+sourceCompatibility = 1.7
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+sourceSets.main.java.srcDirs = [ "src/" ]
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier = 'javadoc'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'flexbatch'
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            pom {
+                name = 'FlexBatch'
+                description = 'A library for batch drawing custom types of sprites or small meshes in LibGDX.'
+                url = 'https://github.com/CypherCove/FlexBatch'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                organization {
+                    name = 'Cypher Cove'
+                    url = 'www.cyphercove.com'
+                }
+                scm {
+                    connection = 'scm:git:git@github.com:cyphercove/flexbatch.git'
+                    developerConnection = 'scm:git:git@cyphercove/flexbatch.git'
+                    url = 'https://github.com/cyphercove/FlexBatch/'
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    pkg {
+        repo = 'maven'
+        name = 'FlexBatch'
+        userOrg = 'cyphercove'
+        version {
+            name = rootProject.getVersion()
+            released  = new Date()
+        }
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/cyphercove/FlexBatch/'
+    }
+    publications = ['mavenJava']
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
