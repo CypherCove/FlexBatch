@@ -450,8 +450,9 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         Mesh mesh = this.mesh;
         mesh.setVertices(vertices, 0, vertIdx);
         if (fixedIndices) {
-            mesh.getIndicesBuffer().position(0);
-            mesh.getIndicesBuffer().limit(triIdx);
+            Buffer buffer = mesh.getIndicesBuffer(); //cast to buffer so JDK 9+ compiler doesn't compile Java 7/8-incompatible method signature
+            buffer.position(0);
+            buffer.limit(triIdx);
         } else {
             mesh.setIndices(triangles, 0, triIdx);
         }
