@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
+import org.jetbrains.annotations.NotNull;
 
 /** A Batchable is an object that can be drawn by a FlexBatch. It also serves as a template object for the FlexBatch to set itself
  * up. All subclasses of Batchable must have an empty constructor if they are to be used as a template for FlexBatch.
@@ -37,7 +38,7 @@ public abstract class Batchable implements Poolable {
 	 * particular instance of this Batchable type.
 	 * 
 	 * @param renderContext The FlexBatch's manager of GL state changes and texture bindings. */
-	protected void prepareSharedContext (RenderContextAccumulator renderContext) {
+	protected void prepareSharedContext (@NotNull RenderContextAccumulator renderContext) {
 	}
 
 	/** Called before {@link #apply(float[], int, AttributeOffsets, int)} to set render context states and texture bindings, and to
@@ -56,7 +57,7 @@ public abstract class Batchable implements Poolable {
 	 * @return Whether FlexBatch needs to be flushed before this Batchable can be drawn. This may be true because it binds new
 	 *         textures, there isn't enough vertex or triangle capacity left, or because this Batchable uses new render context
 	 *         parameters. */
-	protected abstract boolean prepareContext (RenderContextAccumulator renderContext, int remainingVertices,
+	protected abstract boolean prepareContext (@NotNull RenderContextAccumulator renderContext, int remainingVertices,
 		int remainingIndices);
 
 	/** A Batchable implementation calls this to populate a list of vertex attributes that will be used by the FlexBatch. This is
@@ -64,7 +65,7 @@ public abstract class Batchable implements Poolable {
 	 * attributes. Any subclass that does not have equivalent attributes to the superclass cannot be drawn by a FlexBatch that was
 	 * instantiated with the superclass type.
 	 * @param attributes An array to which attributes can be added. */
-	protected abstract void addVertexAttributes (Array<VertexAttribute> attributes);
+	protected abstract void addVertexAttributes (@NotNull Array<VertexAttribute> attributes);
 
 	/** @return The number of simultaneous textures that are drawn. This is used by the FlexBatch to determine how many texture
 	 *         uniforms to bind to the shader. Must always return the same value. */
@@ -83,7 +84,7 @@ public abstract class Batchable implements Poolable {
 	 * @param vertexSize The size of a vertex in floats.
 	 * @return The number of vertices that were added. The value is unused if this is a {@link FixedSizeBatchable}, as it is
 	 *         assumed to match {@link FixedSizeBatchable#getVerticesPerBatchable()}. */
-	protected abstract int apply (float[] vertices, int startingIndex, AttributeOffsets offsets, int vertexSize);
+	protected abstract int apply (@NotNull float[] vertices, int startingIndex, @NotNull AttributeOffsets offsets, int vertexSize);
 
 	/** Called by FlexBatch. Applies the triangle vertex data indices to the array that will be sent to the Mesh. This method is
 	 * never called on {@link FixedSizeBatchable FixedSizeBatchables}.
@@ -94,17 +95,17 @@ public abstract class Batchable implements Poolable {
 	 * @param startingIndex
 	 * @param firstVertex The first vertex value that should be used.
 	 * @return The number of triangle indices that were added. */
-	protected abstract int apply (short[] triangles, int startingIndex, short firstVertex);
+	protected abstract int apply (@NotNull short[] triangles, int startingIndex, short firstVertex);
 
 	/** Parent class for Batchables that all have the same number of vertices and triangles. This allows all triangle indices for a
 	 * FlexBatch to be generated one time so they don't have to be repeatedly updated when drawing. */
 	public static abstract class FixedSizeBatchable extends Batchable {
 
-		private static ObjectMap<Class<? extends FixedSizeBatchable>, short[]> indicesModels = new ObjectMap<Class<? extends FixedSizeBatchable>, short[]>();
+		private static ObjectMap<Class<? extends FixedSizeBatchable>, short[]> indicesModels = new ObjectMap<>();
 
 		/** Primes a FixedSizeBatchable implementation for drawing with FlexBatches that are not limited to FixedSizeBatchables. May
 		 * help avoid a one-time delay the first time one is drawn. */
-		public static <T extends FixedSizeBatchable> void prepareIndices (Class<T> fixedSizeBatchableType) {
+		public static <T extends FixedSizeBatchable> void prepareIndices (@NotNull Class<T> fixedSizeBatchableType) {
 			T instance = null;
 			try {
 				instance = fixedSizeBatchableType.newInstance();
@@ -129,11 +130,11 @@ public abstract class Batchable implements Poolable {
 		 * FixedSizeBatchables.
 		 * @param triangles An array of triangle indices that, before this method returns, must be fully populated for drawing a
 		 *           series of this Batchable type. */
-		protected abstract void populateTriangleIndices (short[] triangles);
+		protected abstract void populateTriangleIndices (@NotNull short[] triangles);
 
 		/** Called by FlexBatch to apply triangle index data, only if this FixedSizeBatchable is drawn by a FlexBatch that is not
 		 * limited to drawing FixedSizeBatchables. See {@link Batchable#apply(short[], int, short)} */
-		protected final int apply (short[] triangles, int triangleStartingIndex, short firstVertex) {
+		protected final int apply (@NotNull short[] triangles, int triangleStartingIndex, short firstVertex) {
 			short[] model = indicesModels.get(getClass());
 			if (model == null) {
 				model = new short[getTrianglesPerBatchable() * 3];
@@ -141,8 +142,8 @@ public abstract class Batchable implements Poolable {
 				indicesModels.put(getClass(), model);
 			}
 
-			for (int i = 0; i < model.length; i++) {
-				triangles[triangleStartingIndex++] = (short)(model[i] + firstVertex);
+			for (short value : model) {
+				triangles[triangleStartingIndex++] = (short) (value + firstVertex);
 			}
 
 			return model.length;

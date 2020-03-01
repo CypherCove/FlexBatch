@@ -24,6 +24,8 @@ import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.cyphercove.flexbatch.batchable.Quad2D;
 import com.cyphercove.flexbatch.utils.BatchablePreparation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** A {@link FlexBatch} that implements the {@link Batch} interface, so it is compatible with Stage/Actor, BitmapFont,
  * ParticleEffect, Sprite, and NinePatch. It creates its own default ShaderProgram, which is owned and is disposed automatically
@@ -51,7 +53,7 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	 * has been applied with {@link #setShader(ShaderProgram)}, the default can be used again by setting the shader to null.
 	 * @param supportPolygons Whether Poly2Ds are supported for drawing. The FlexBatch will not be optimized for
 	 *           FixedSizeBatchables. */
-	public CompliantBatch (Class<T> batchableType, boolean supportPolygons) {
+	public CompliantBatch (@NotNull Class<T> batchableType, boolean supportPolygons) {
 		this(batchableType, 4000, supportPolygons);
 	}
 
@@ -61,7 +63,7 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	 * @param maxVertices The number of vertices this FlexBatch can batch at once. Maximum of 32767.
 	 * @param supportPolygons Whether Poly2Ds are supported for drawing. The FlexBatch will not be optimized for
 	 *           FixedSizeBatchables. */
-	public CompliantBatch (Class<T> batchableType, int maxVertices, boolean supportPolygons) {
+	public CompliantBatch (@NotNull Class<T> batchableType, int maxVertices, boolean supportPolygons) {
 		this(batchableType, maxVertices, true, supportPolygons);
 	}
 
@@ -72,7 +74,7 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	 *           applied with {@link #setShader(ShaderProgram)}, the default can be used again by setting the shader to null.
 	 * @param supportPolygons Whether Poly2Ds are supported for drawing. The FlexBatch will not be optimized for
 	 *           FixedSizeBatchables. */
-	public CompliantBatch (Class<T> batchableType, int maxVertices, boolean generateDefaultShader, boolean supportPolygons) {
+	public CompliantBatch (@NotNull Class<T> batchableType, int maxVertices, boolean generateDefaultShader, boolean supportPolygons) {
 		super(batchableType, maxVertices, supportPolygons ? maxVertices * 2 : 0);
 		try {
 			tmp = batchableType.newInstance();
@@ -91,7 +93,7 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	}
 
 	@Override
-	public void setShader (ShaderProgram shader) {
+	public void setShader (@Nullable ShaderProgram shader) {
 		if (shader == null) shader = defaultShader;
 		super.setShader(shader);
 	}
@@ -105,7 +107,7 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	/** Sets the color used to tint images when they are added to the Batch. Default is Color.WHITE. Does not affect the color of
 	 * anything drawn with {@link #draw()}, {@link #draw(Batchable)}, or {@link #draw(Texture, float[], int, int)}. */
 	@Override
-	public void setColor (Color tint) {
+	public void setColor (@NotNull Color tint) {
 		color = tint.toFloatBits();
 	}
 
@@ -126,7 +128,7 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	}
 
 	@Override
-	public Color getColor () {
+	public @NotNull Color getColor () {
 		int intBits = NumberUtils.floatToIntColor(color);
 		Color color = tempColor;
 		color.r = (intBits & 0xff) / 255f;
@@ -142,14 +144,14 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	}
 
 	@Override
-	public void draw (Texture texture, float[] spriteVertices, int offset, int count) {
+	public void draw (@NotNull Texture texture, @NotNull float[] spriteVertices, int offset, int count) {
 		tmp.refresh();
 		tmp.texture(texture);
 		super.draw(tmp, spriteVertices, offset, count, 5);
 	}
 
 	@Override
-	public void draw (Texture texture, float x, float y, float originX, float originY, float width, float height, float scaleX,
+	public void draw (@NotNull Texture texture, float x, float y, float originX, float originY, float width, float height, float scaleX,
 		float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
 		float invTexWidth = 1.0f / texture.getWidth();
 		float invTexHeight = 1.0f / texture.getHeight();
@@ -162,7 +164,7 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	}
 
 	@Override
-	public void draw (Texture texture, float x, float y, float width, float height, int srcX, int srcY, int srcWidth,
+	public void draw (@NotNull Texture texture, float x, float y, float width, float height, int srcX, int srcY, int srcWidth,
 		int srcHeight, boolean flipX, boolean flipY) {
 		float invTexWidth = 1.0f / texture.getWidth();
 		float invTexHeight = 1.0f / texture.getHeight();
@@ -174,7 +176,7 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	}
 
 	@Override
-	public void draw (Texture texture, float x, float y, int srcX, int srcY, int srcWidth, int srcHeight) {
+	public void draw (@NotNull Texture texture, float x, float y, int srcX, int srcY, int srcWidth, int srcHeight) {
 		float invTexWidth = 1.0f / texture.getWidth();
 		float invTexHeight = 1.0f / texture.getHeight();
 		float u = srcX * invTexWidth;
@@ -185,46 +187,46 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	}
 
 	@Override
-	public void draw (Texture texture, float x, float y, float width, float height, float u, float v, float u2, float v2) {
+	public void draw (@NotNull Texture texture, float x, float y, float width, float height, float u, float v, float u2, float v2) {
 		draw().color(color).texture(texture).position(x, y).size(width, height).region(u, v, u2, v2);
 	}
 
 	@Override
-	public void draw (Texture texture, float x, float y) {
+	public void draw (@NotNull Texture texture, float x, float y) {
 		draw().color(color).texture(texture).position(x, y);
 	}
 
 	@Override
-	public void draw (Texture texture, float x, float y, float width, float height) {
+	public void draw (@NotNull Texture texture, float x, float y, float width, float height) {
 		draw().color(color).texture(texture).position(x, y).size(width, height);
 	}
 
 	@Override
-	public void draw (TextureRegion region, float x, float y) {
+	public void draw (@NotNull TextureRegion region, float x, float y) {
 		draw().color(color).textureRegion(region).position(x, y);
 	}
 
 	@Override
-	public void draw (TextureRegion region, float x, float y, float width, float height) {
+	public void draw (@NotNull TextureRegion region, float x, float y, float width, float height) {
 		draw().color(color).textureRegion(region).position(x, y).size(width, height);
 	}
 
 	@Override
-	public void draw (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
+	public void draw (@NotNull TextureRegion region, float x, float y, float originX, float originY, float width, float height,
 		float scaleX, float scaleY, float rotation) {
 		draw().color(color).textureRegion(region).position(x, y).origin(originX, originY).size(width, height).scale(scaleX, scaleY)
 			.rotation(rotation);
 	}
 
 	@Override
-	public void draw (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
+	public void draw (@NotNull TextureRegion region, float x, float y, float originX, float originY, float width, float height,
 		float scaleX, float scaleY, float rotation, boolean clockwise) {
 		draw().color(color).textureRegion(region).position(x, y).origin(originX, originY).size(width, height).scale(scaleX, scaleY)
 			.rotation(rotation).rotateCoordinates90(clockwise);
 	}
 
 	@Override
-	public void draw (TextureRegion region, float width, float height, Affine2 transform) {
+	public void draw (@NotNull TextureRegion region, float width, float height, @NotNull Affine2 transform) {
 		float[] vertices = tempVertices;
 
 		vertices[U1] = region.getU();

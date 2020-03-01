@@ -4,7 +4,6 @@ plugins {
     id "com.jfrog.bintray" version "1.8.4"
 }
 
-sourceCompatibility = 1.7
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]

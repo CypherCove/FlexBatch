@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.Pool;
 import com.cyphercove.flexbatch.Batchable;
 import com.cyphercove.flexbatch.FlexBatch;
+import org.jetbrains.annotations.NotNull;
 
 /** Sorts 3D {@link Batchable Batchables} to ensure proper render order before passing them to a {@link FlexBatch}.
  * <p>
@@ -52,11 +53,11 @@ public class BatchableSorter<T extends Batchable & SortableBatchable<T>> {
 
 	};
 
-	public BatchableSorter (Camera camera) {
+	public BatchableSorter (@NotNull Camera camera) {
 		this(camera, 2, 1000, 1000);
 	}
 
-	public BatchableSorter (Camera camera, int opaqueIntialTextureCapacity, int opaqueInitialCapacityPerTexture,
+	public BatchableSorter (@NotNull Camera camera, int opaqueIntialTextureCapacity, int opaqueInitialCapacityPerTexture,
 		int blendedInitialCapacity) {
 		this.cameraPosition = camera.position;
 		this.opaqueInitialCapacityPerTexture = opaqueInitialCapacityPerTexture;
@@ -82,7 +83,7 @@ public class BatchableSorter<T extends Batchable & SortableBatchable<T>> {
 
 	/** Sort (if necessary) and draw the queued Batchables without clearing them. Must be called in between
 	 * {@link FlexBatch#begin()} and {@link FlexBatch#end()}. */
-	public void draw (FlexBatch<T> flexBatch) {
+	public void draw (@NotNull FlexBatch<T> flexBatch) {
 		if (needSort) {
 			blendedBatchables.sort(comparator);
 			needSort = false;
@@ -96,13 +97,13 @@ public class BatchableSorter<T extends Batchable & SortableBatchable<T>> {
 
 	/** Sort (if necessary), draw, and clear references to the queued Batchables. Must be called in between
 	 * {@link FlexBatch#begin()} and {@link FlexBatch#end()}. */
-	public void flush (FlexBatch<T> flexBatch) {
+	public void flush (@NotNull FlexBatch<T> flexBatch) {
 		draw(flexBatch);
 		clear();
 	}
 
 	/** Add a Batchable to the queue. */
-	public void add (T batchable) {
+	public void add (@NotNull T batchable) {
 		if (batchable.isOpaque()) {
 			for (ObjectMap.Entry<T, ObjectSet<T>> entry : opaqueBatchables) {
 				if (batchable.hasEquivalentTextures(entry.key)) {
@@ -120,7 +121,7 @@ public class BatchableSorter<T extends Batchable & SortableBatchable<T>> {
 	}
 
 	/** Sets the camera that is used for distance comparisons to sort the blended Batchables. */
-	public void setCamera (Camera camera) {
+	public void setCamera (@NotNull Camera camera) {
 		cameraPosition = camera.position;
 	}
 }

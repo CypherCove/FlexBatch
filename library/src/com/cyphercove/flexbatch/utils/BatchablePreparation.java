@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
+import org.jetbrains.annotations.NotNull;
 
 public final class BatchablePreparation {
 
@@ -31,8 +32,8 @@ public final class BatchablePreparation {
 	 * @param textureCoordinates3D Whether the texture coordinate attribute(s) should include a third component.
 	 * @param attributes The array to add the vertex attributes to. They are added with position and color in the first two
 	 *           available positions, followed by texture coordinates. */
-	public static void addBaseAttributes (Array<VertexAttribute> attributes, int textureCount, boolean position3D,
-		boolean textureCoordinates3D) {
+	public static void addBaseAttributes (@NotNull Array<VertexAttribute> attributes, int textureCount, boolean position3D,
+										  boolean textureCoordinates3D) {
 		attributes.add(new VertexAttribute(Usage.Position, position3D ? 3 : 2, ShaderProgram.POSITION_ATTRIBUTE));
 		attributes.add(new VertexAttribute(Usage.ColorPacked, 4, ShaderProgram.COLOR_ATTRIBUTE));
 		for (int i = 0; i < textureCount; i++) {
@@ -70,7 +71,7 @@ public final class BatchablePreparation {
 		return sb.toString();
 	}
 
-	public static String generateGenericFragmentShader (int textureCount) { // TODO default should only use first texture
+	public static @NotNull String generateGenericFragmentShader (int textureCount) { // TODO default should only use first texture
 		boolean v3 = Gdx.gl30 != null;
 		String varying = v3 ? "in" : "varying";
 		String outColor = v3 ? "fragmentColor" : "gl_FragColor";
@@ -119,7 +120,7 @@ public final class BatchablePreparation {
 	 * <br>1--4
 	 * </code>
 	 * @param triangles The array that will be filled with triangle indices. */
-	public static void populateQuadrangleIndices (short[] triangles) {
+	public static void populateQuadrangleIndices (@NotNull short[] triangles) {
 		short j = 0;
 		for (int i = 0; i + 5 < triangles.length; i += 6, j += 4) {
 			triangles[i] = j;

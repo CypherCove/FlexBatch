@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
+import org.jetbrains.annotations.NotNull;
 
 /** A {@link Quad3D} with support for lighting through the use of normal, tangent, and binormal vertex attributes.
  * 
@@ -42,14 +43,14 @@ public class LitQuad3D extends Quad3D {
 		super(blending);
 	}
 
-	protected void addVertexAttributes (Array<VertexAttribute> attributes) {
+	protected void addVertexAttributes (@NotNull Array<VertexAttribute> attributes) {
 		super.addVertexAttributes(attributes);
 		attributes.add(new VertexAttribute(Usage.Normal, 3, "a_normal"));
 		attributes.add(new VertexAttribute(Usage.Tangent, 3, "a_tangent"));
 		attributes.add(new VertexAttribute(Usage.BiNormal, 3, "a_binormal"));
 	}
 
-	protected int apply (float[] vertices, int vertexStartingIndex, AttributeOffsets offsets, int vertexSize) {
+	protected int apply (@NotNull float[] vertices, int vertexStartingIndex, @NotNull AttributeOffsets offsets, int vertexSize) {
 		super.apply(vertices, vertexStartingIndex, offsets, vertexSize);
 
 		TMP1.set(0, 0, 1);

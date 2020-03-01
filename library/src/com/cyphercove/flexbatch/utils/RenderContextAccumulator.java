@@ -19,6 +19,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.utils.IntMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** Stores up pending GL state changes and textures to bind, and executes them on demand. Minimizes actual state changes.
  * Remembers and can restore state between uses.
@@ -36,7 +38,7 @@ public class RenderContextAccumulator {
 		int depthFunc;
 		float depthRangeNear, depthRangeFar;
 		int cullFace;
-		final IntMap<GLTexture> textureUnits = new IntMap<GLTexture>(32);
+		final @NotNull IntMap<GLTexture> textureUnits = new IntMap<GLTexture>(32);
 
 		public void applyDefaults () {
 			blending = depthTesting = culling = false;
@@ -308,8 +310,10 @@ public class RenderContextAccumulator {
 	}
 
 	/** Sets the texture to be bound to the given texture unit.
+	 * @param texture The texture to bind, or null to clear any bound texture for the unit.
+	 * @param unit The texture unit to use.
 	 * @return Whether the pending texture for the unit was changed. */
-	public boolean setTextureUnit (GLTexture texture, int unit) {
+	public boolean setTextureUnit (@Nullable GLTexture texture, int unit) {
 		if (pending.textureUnits.get(unit) != texture) {
 			if (texture == null)
 				pending.textureUnits.remove(unit);
@@ -321,6 +325,7 @@ public class RenderContextAccumulator {
 	}
 
 	/** Cancels any pending texture that is to be bound to the given texture unit.
+	 * @param unit The texture unit to use.
 	 * @return whether a unit was cleared. */
 	public boolean clearTextureUnit (int unit) {
 		return null != pending.textureUnits.remove(unit);

@@ -33,6 +33,7 @@ import com.cyphercove.flexbatch.batchable.Quad3D;
 import com.cyphercove.flexbatch.Batchable.FixedSizeBatchable;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Draws batched {@link Batchable} objects, optimizing the drawing process by combining them into a single Mesh. FlexBatch can be
@@ -72,7 +73,7 @@ import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
  */
 public class FlexBatch<T extends Batchable> implements Disposable {
 
-    public final Class<T> batchableType;
+    public final @NotNull Class<T> batchableType;
     private T internalBatchable;
     private boolean havePendingInternal;
     private final Mesh mesh;
@@ -124,7 +125,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      * @param maxTriangles  The number of triangles this FlexBatch can batch at once, or 0 to optimize this FlexBatch to draw only
      *                      FixedSizeBatchables.
      */
-    public FlexBatch (Class<T> batchableType, int maxVertices, int maxTriangles) {
+    public FlexBatch (@NotNull Class<T> batchableType, int maxVertices, int maxTriangles) {
         // 32767 is max vertex index.
         if (maxVertices > 32767)
             throw new IllegalArgumentException("Can't have more than 32767 vertices per batch: " + maxTriangles);
@@ -226,7 +227,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      *
      * @return the render context, whose parameters may be set to affect drawing.
      */
-    public RenderContextAccumulator getRenderContext () {
+    public @NotNull RenderContextAccumulator getRenderContext () {
         return renderContext;
     }
 
@@ -241,7 +242,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      * <p>
      * Do not cache and reuse the returned Batchable.
      */
-    public T draw () {
+    public @NotNull T draw () {
         if (havePendingInternal) drawPending();
         havePendingInternal = true;
         internalBatchable.refresh();
@@ -262,7 +263,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      *
      * @param batchable
      */
-    public void draw (Batchable batchable) {
+    public void draw (@NotNull Batchable batchable) {
         if (havePendingInternal) drawPending();
         if (!drawing) throw new IllegalStateException("begin() must be called before drawing.");
         if (fixedIndices) {
@@ -293,7 +294,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      *                         garbage, but this may be acceptable if the current shader doesn't use them. It is assumed that the
      *                         VertexAttributes being drawn match the first of the VertexAttributes of the Batchable type.
      */
-    protected void draw (FixedSizeBatchable batchable, float[] explicitVertices, int offset, int count, int vertexSize) {
+    protected void draw (@NotNull FixedSizeBatchable batchable, @NotNull float[] explicitVertices, int offset, int count, int vertexSize) {
         if (havePendingInternal) drawPending();
         if (!drawing) throw new IllegalStateException("begin() must be called before drawing.");
         if (batchable.prepareContext(renderContext, maxVertices - vertIdx / vertexSize, 0)) {
@@ -402,8 +403,8 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      * @param trianglesOffset   Starting index of the data in the array.
      * @param trianglesCount    The number of array elements to pass. Must be a multiple of 3.
      */
-    protected void draw (Batchable batchable, float[] explicitVertices, int verticesOffset, int vertexDataCount, int vertexSize,
-                         short[] explicitTriangles, int trianglesOffset, int trianglesCount) {
+    protected void draw (@NotNull Batchable batchable, @NotNull float[] explicitVertices, int verticesOffset, int vertexDataCount, int vertexSize,
+                         @NotNull short[] explicitTriangles, int trianglesOffset, int trianglesCount) {
         if (havePendingInternal) drawPending();
         if (!drawing) throw new IllegalStateException("begin() must be called before drawing.");
         if (fixedIndices)
@@ -502,11 +503,13 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         vertIdx += vertexDataPerBatchable;
     }
 
-    public ShaderProgram getShader () {
+    public @NotNull ShaderProgram getShader () {
+        if (shader == null)
+            throw new IllegalStateException("Cannot get the shader before it has been assigned.");
         return shader;
     }
 
-    public void setShader (ShaderProgram shader) {
+    public void setShader (@NotNull ShaderProgram shader) {
         if (drawing) {
             flush();
             shader.end();
@@ -567,21 +570,21 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         return renderContext.isBlendingEnabled();
     }
 
-    public Matrix4 getProjectionMatrix () {
+    public @NotNull Matrix4 getProjectionMatrix () {
         return projectionMatrix;
     }
 
-    public Matrix4 getTransformMatrix () {
+    public @NotNull Matrix4 getTransformMatrix () {
         return transformMatrix;
     }
 
-    public void setProjectionMatrix (Matrix4 projection) {
+    public void setProjectionMatrix (@NotNull Matrix4 projection) {
         if (drawing) flush();
         projectionMatrix.set(projection);
         if (drawing) applyMatrices();
     }
 
-    public void setTransformMatrix (Matrix4 transform) {
+    public void setTransformMatrix (@NotNull Matrix4 transform) {
         if (drawing) flush();
         transformMatrix.set(transform);
         if (drawing) applyMatrices();

@@ -22,6 +22,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
+import org.jetbrains.annotations.NotNull;
 
 public class Poly2D extends Poly {
 	public float rotation;
@@ -36,7 +37,7 @@ public class Poly2D extends Poly {
 		return false;
 	}
 
-	protected void prepareSharedContext (RenderContextAccumulator renderContext) {
+	protected void prepareSharedContext (@NotNull RenderContextAccumulator renderContext) {
 		super.prepareSharedContext(renderContext);
 		renderContext.setDepthMasking(false);
 	}
@@ -48,7 +49,7 @@ public class Poly2D extends Poly {
 
 	/** Sets the position of the bottom left of the texture region in world space.
 	 * @return This object for chaining. */
-	public Poly2D position (float x, float y) {
+	public @NotNull Poly2D position (float x, float y) {
 		this.x = x;
 		this.y = y;
 		return this;
@@ -56,19 +57,19 @@ public class Poly2D extends Poly {
 
 	/** Sets the position of the bottom left of the texture region in world space.
 	 * @return This object for chaining. */
-	public Poly2D position (Vector2 position) {
+	public @NotNull Poly2D position (@NotNull Vector2 position) {
 		x = position.x;
 		y = position.y;
 		return this;
 	}
 
-	public Poly2D rotation (float rotation) {
+	public @NotNull Poly2D rotation (float rotation) {
 		this.rotation = rotation;
 		return this;
 	}
 
 	@Override
-	protected int apply (float[] vertices, int vertexStartingIndex, AttributeOffsets offsets, int vertexSize) {
+	protected int apply (@NotNull float[] vertices, int vertexStartingIndex, @NotNull AttributeOffsets offsets, int vertexSize) {
 		super.apply(vertices, vertexStartingIndex, offsets, vertexSize);
 		final PolygonRegion region = this.region;
 		final TextureRegion tRegion = region.getRegion();
@@ -99,37 +100,37 @@ public class Poly2D extends Poly {
 
 	// Chain methods must be overridden to allow return of subclass type.
 
-	public Poly2D region (PolygonRegion region) {
+	public @NotNull Poly2D region (@NotNull PolygonRegion region) {
 		super.region(region);
 		return this;
 	}
 
-	public Poly2D size (float width, float height) {
+	public @NotNull Poly2D size (float width, float height) {
 		super.size(width, height);
 		return this;
 	}
 
-	public Poly2D origin (float originX, float originY) {
+	public @NotNull Poly2D origin (float originX, float originY) {
 		super.origin(originX, originY);
 		return this;
 	}
 
-	public Poly2D color (Color color) {
+	public @NotNull Poly2D color (@NotNull Color color) {
 		super.color(color);
 		return this;
 	}
 
-	public Poly2D color (float r, float g, float b, float a) {
+	public @NotNull Poly2D color (float r, float g, float b, float a) {
 		super.color(r, g, b, a);
 		return this;
 	}
 
-	public Poly2D color (float floatBits) {
+	public @NotNull Poly2D color (float floatBits) {
 		super.color(floatBits);
 		return this;
 	}
 
-	public Poly2D scale (float scaleX, float scaleY) {
+	public @NotNull Poly2D scale (float scaleX, float scaleY) {
 		super.scale(scaleX, scaleY);
 		return this;
 	}

@@ -19,19 +19,20 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.utils.ObjectIntMap;
+import org.jetbrains.annotations.NotNull;
 
 /** Provides fast and convenient access to VertexAttribute offsets, in float-size units.
  * 
  * @author cypherdare */
 public class AttributeOffsets {
 
-	public final VertexAttributes attributes;
+	public final @NotNull VertexAttributes attributes;
 	private final ObjectIntMap<String> byAlias;
 	private final int[] byIndex;
 	public final int position, color0, color1, color2, color3, textureCoordinate0, textureCoordinate1, textureCoordinate2,
 		textureCoordinate3, generic0, generic1, generic2, generic3, normal, tangent, biNormal;
 
-	public AttributeOffsets (VertexAttributes attributes) {
+	public AttributeOffsets (@NotNull VertexAttributes attributes) {
 		this.attributes = attributes;
 		byAlias = new ObjectIntMap<String>(attributes.size());
 		byIndex = new int[attributes.size()];

@@ -16,6 +16,7 @@
 package com.cyphercove.flexbatch.utils;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import org.jetbrains.annotations.NotNull;
 
 /** Minimal data to define a two-dimensional region of any Texture or TextureArray. */
 public class Region2D {
@@ -28,7 +29,7 @@ public class Region2D {
 		layer = 0;
 	}
 
-	public void set (TextureRegion region) {
+	public void set (@NotNull TextureRegion region) {
 		u = region.getU();
 		u2 = region.getU2();
 		v = region.getV();

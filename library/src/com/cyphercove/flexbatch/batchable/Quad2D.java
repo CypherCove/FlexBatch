@@ -23,6 +23,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.cyphercove.flexbatch.Batchable;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
+import org.jetbrains.annotations.NotNull;
 
 /** A {@link Quad} {@link Batchable Batchable} that supports a single texture at a time, with
  * two-dimensional position and color. It is designed to be drawn in a 2D plane, and is commonly called a sprite.
@@ -46,7 +47,7 @@ public class Quad2D extends Quad {
 		return false;
 	}
 
-	protected void prepareSharedContext (RenderContextAccumulator renderContext) {
+	protected void prepareSharedContext (@NotNull RenderContextAccumulator renderContext) {
 		super.prepareSharedContext(renderContext);
 		renderContext.setDepthMasking(false);
 	}
@@ -58,7 +59,7 @@ public class Quad2D extends Quad {
 
 	/** Sets the position of the bottom left of the texture region in world space.
 	 * @return This object for chaining. */
-	public Quad2D position (float x, float y) {
+	public @NotNull Quad2D position (float x, float y) {
 		this.x = x;
 		this.y = y;
 		return this;
@@ -66,18 +67,18 @@ public class Quad2D extends Quad {
 
 	/** Sets the position of the bottom left of the texture region in world space.
 	 * @return This object for chaining. */
-	public Quad2D position (Vector2 position) {
+	public @NotNull Quad2D position (@NotNull Vector2 position) {
 		x = position.x;
 		y = position.y;
 		return this;
 	}
 
-	public Quad2D rotation (float rotation) {
+	public @NotNull Quad2D rotation (float rotation) {
 		this.rotation = rotation;
 		return this;
 	}
 
-	protected int apply (float[] vertices, int vertexStartingIndex, AttributeOffsets offsets, int vertexSize) {
+	protected int apply (@NotNull float[] vertices, int vertexStartingIndex, @NotNull AttributeOffsets offsets, int vertexSize) {
 		super.apply(vertices, vertexStartingIndex, offsets, vertexSize);
 
 		// bottom left and top right corner points relative to origin
@@ -163,62 +164,62 @@ public class Quad2D extends Quad {
 
 	// Chain methods must be overridden to allow return of subclass type.
 
-	public Quad2D texture (Texture texture) {
+	public @NotNull Quad2D texture (@NotNull Texture texture) {
 		super.texture(texture);
 		return this;
 	}
 
-	public Quad2D region (float u, float v, float u2, float v2) {
+	public @NotNull Quad2D region (float u, float v, float u2, float v2) {
 		super.region(u, v, u2, v2);
 		return this;
 	}
 
-	public Quad2D textureRegion (TextureRegion region) {
+	public @NotNull Quad2D textureRegion (@NotNull TextureRegion region) {
 		super.textureRegion(region);
 		return this;
 	}
 
-	public Quad2D flip (boolean flipX, boolean flipY) {
+	public @NotNull Quad2D flip (boolean flipX, boolean flipY) {
 		super.flip(flipX, flipY);
 		return this;
 	}
 
-	public Quad2D flipAll (boolean flipX, boolean flipY) {
+	public @NotNull Quad2D flipAll (boolean flipX, boolean flipY) {
 		super.flipAll(flipX, flipY);
 		return this;
 	}
 
-	public Quad2D size (float width, float height) {
+	public @NotNull Quad2D size (float width, float height) {
 		super.size(width, height);
 		return this;
 	}
 
-	public Quad2D origin (float originX, float originY) {
+	public @NotNull Quad2D origin (float originX, float originY) {
 		super.origin(originX, originY);
 		return this;
 	}
 
-	public Quad2D rotateCoordinates90 (boolean clockwise) {
+	public @NotNull Quad2D rotateCoordinates90 (boolean clockwise) {
 		super.rotateCoordinates90(clockwise);
 		return this;
 	}
 
-	public Quad2D color (Color color) {
+	public @NotNull Quad2D color (@NotNull Color color) {
 		super.color(color);
 		return this;
 	}
 
-	public Quad2D color (float r, float g, float b, float a) {
+	public @NotNull Quad2D color (float r, float g, float b, float a) {
 		super.color(r, g, b, a);
 		return this;
 	}
 
-	public Quad2D color (float floatBits) {
+	public @NotNull Quad2D color (float floatBits) {
 		super.color(floatBits);
 		return this;
 	}
 
-	public Quad2D scale (float scaleX, float scaleY) {
+	public @NotNull Quad2D scale (float scaleX, float scaleY) {
 		super.scale(scaleX, scaleY);
 		return this;
 	}
