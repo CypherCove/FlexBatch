@@ -118,19 +118,26 @@ public class AttributeOffsets {
 	}
 
 	/** Refreshes the mapping of aliases to offsets. Call if any {@link VertexAttribute#alias alias} has been changed. */
-	public void udpate () {
+	public void update () {
 		byAlias.clear();
 		for (VertexAttribute attribute : attributes)
 			byAlias.put(attribute.alias, attribute.offset / 4);
 	}
 
-	/** Get the VertexAttribute offset, in float-size units, looking it up by its {@link VertexAttribute#alias alias}.
-	 * @return The offset, or -1 if the value is not found. */
-	public int get (String alias) {
+	/**
+	 * Get the VertexAttribute offset, in float-size units, looking it up by its {@link VertexAttribute#alias alias}.
+	 *
+	 * @param alias The VertexAttribute alias used to find the attribute offset.
+	 * @return The offset, or -1 if the value is not found.
+	 * */
+	public int get (@NotNull String alias) {
 		return byAlias.get(alias, -1);
 	}
 
-	/** Get the VertexAttribute offset, in float-size units, looking it up by its index in the VertexAttributes.
+	/**
+	 * Get the VertexAttribute offset, in float-size units, looking it up by its index in the VertexAttributes.
+	 *
+	 * @param attributeIndex The index of the VertexAttribute to retrieve.
 	 * @return The offset.
 	 * @throws IndexOutOfBoundsException If the given attribute index does not exist in the VertexAttributes. */
 	public int get (int attributeIndex) {
