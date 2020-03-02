@@ -38,9 +38,11 @@ import org.jetbrains.annotations.NotNull;
  * It may be subclassed to create a Batchable class that supports multiple textures and additional attributes--see
  * {@link #getNumberOfTextures()} and {@link #addVertexAttributes(com.badlogic.gdx.utils.Array) addVertexAttributes()}. Such a
  * subclass would not be compatible with a FlexBatch that was instantiated for the base Sprite type.
- * 
+ *
+ * @param <T> The type of the quad, used for passing to a {@link SortableBatchable}.
+ *
  * @author cypherdare */
-public class Quad3D extends Quad implements SortableBatchable<Quad3D> {
+public class Quad3D<T extends Quad3D> extends Quad implements SortableBatchable<T> {
 
 	public float z;
 	public final @NotNull Quaternion rotation = new Quaternion();
@@ -122,7 +124,7 @@ public class Quad3D extends Quad implements SortableBatchable<Quad3D> {
 		return needsFlush;
 	}
 
-	public boolean hasEquivalentTextures (@NotNull Quad3D other) {
+	public boolean hasEquivalentTextures (@NotNull T other) {
 		for (int i = 0; i < textures.length; i++) {
 			if (other.textures[i] != textures[i]) return false;
 		}

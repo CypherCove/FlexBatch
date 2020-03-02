@@ -39,10 +39,13 @@ public class BatchableSorter<T extends Batchable & SortableBatchable<T>> {
 	private final ObjectMap<T, ObjectSet<T>> opaqueBatchables; // first entered to material group
 	private final Array<T> blendedBatchables;
 	private final Comparator<T> comparator;
-	protected Vector3 cameraPosition;
+	private Camera camera;
+	/** The position of the set camera. Direct field access is provided for optimization. The reference should not be
+	 * directly changed to a different object. Use {@link #setCamera(Camera)} instead. */
+	protected @NotNull Vector3 cameraPosition;
 	private boolean needSort;
 
-	private Pool<ObjectSet<T>> objectSetPool = new Pool<ObjectSet<T>>() {
+	private final Pool<ObjectSet<T>> objectSetPool = new Pool<ObjectSet<T>>() {
 		protected void reset (ObjectSet<T> object) {
 			object.clear();
 		}
@@ -52,20 +55,42 @@ public class BatchableSorter<T extends Batchable & SortableBatchable<T>> {
 		}
 
 	};
-
+	/**
+	 * Construct a BatchableSorter suitable for rendering both opaque and blended batchables.
+	 *
+	 * @param camera Initial camera to use for sorting distance.
+	 */
 	public BatchableSorter (@NotNull Camera camera) {
 		this(camera, 2, 1000, 1000);
 	}
 
-	public BatchableSorter (@NotNull Camera camera, int opaqueIntialTextureCapacity, int opaqueInitialCapacityPerTexture,
-		int blendedInitialCapacity) {
-		this.cameraPosition = camera.position;
-		this.opaqueInitialCapacityPerTexture = opaqueInitialCapacityPerTexture;
-		opaqueBatchables = new ObjectMap<T, ObjectSet<T>>();
-		for (int i = 0; i < opaqueIntialTextureCapacity; i++) { // seed the pool to avoid delay on first use
+	/**
+	 * Construct a BatchableSorter using specific values for initial backing array sizes.
+	 *
+	 * @param camera Initial camera to use for sorting distance.
+	 * @param opaqueInitialTextureCapacity The initial number of backing arrays created for opaque Batchables. One is
+	 *                                        used for each unique texture that is simultaneously queued. This should be
+	 *                                        as high as the expected number of unique textures for opaque Batchables to
+	 *                                        prevent potential stutters from adding new backing arrays during queuing.
+	 * @param opaqueInitialCapacityPerTexture The initial capacity of each backing array of opaque Batchables. One is
+	 *                                        created for each unique texture that is simultaneously queued. A larger
+	 *                                        initial capacity may prevent backing array resizes during queuing, and so
+	 *                                        may reduce the potential for stutters.
+	 * @param blendedInitialCapacity The initial capacity of the backing array that stores blended Batchables before they
+	 *                               are flushed or drawn. A larger initial capacity may prevent backing array resizes
+	 *                               during queuing, and so may reduce the potential for stutters.
+	 */
+	public BatchableSorter (@NotNull Camera camera,
+							int opaqueInitialTextureCapacity,
+							int opaqueInitialCapacityPerTexture,
+							int blendedInitialCapacity) {
+		setCamera(camera);
+		this.opaqueInitialCapacityPerTexture = Math.max(10, opaqueInitialCapacityPerTexture);
+		opaqueBatchables = new ObjectMap<>();
+		for (int i = 0; i < opaqueInitialTextureCapacity; i++) { // seed the pool to avoid delay on first use
 			objectSetPool.free(objectSetPool.obtain());
 		}
-		blendedBatchables = new Array<T>(blendedInitialCapacity);
+		blendedBatchables = new Array<T>(Math.max(32, blendedInitialCapacity));
 		comparator = new Comparator<T>() {
 			public int compare (T o1, T o2) {
 				return (int)Math.signum(o2.calculateDistanceSquared(cameraPosition) - o1.calculateDistanceSquared(cameraPosition));
@@ -82,7 +107,10 @@ public class BatchableSorter<T extends Batchable & SortableBatchable<T>> {
 	}
 
 	/** Sort (if necessary) and draw the queued Batchables without clearing them. Must be called in between
-	 * {@link FlexBatch#begin()} and {@link FlexBatch#end()}. */
+	 * {@link FlexBatch#begin()} and {@link FlexBatch#end()}.
+	 *
+	 * @param flexBatch The batch to draw the batchables with.
+	 */
 	public void draw (@NotNull FlexBatch<T> flexBatch) {
 		if (needSort) {
 			blendedBatchables.sort(comparator);
@@ -95,14 +123,22 @@ public class BatchableSorter<T extends Batchable & SortableBatchable<T>> {
 			flexBatch.draw(batchable);
 	}
 
-	/** Sort (if necessary), draw, and clear references to the queued Batchables. Must be called in between
-	 * {@link FlexBatch#begin()} and {@link FlexBatch#end()}. */
+	/**
+	 * Sort (if necessary), draw, and clear references to the queued Batchables. Must be called in between
+	 * {@link FlexBatch#begin()} and {@link FlexBatch#end()}.
+	 *
+	 * @param flexBatch The batch to draw the batchables with.
+	 * */
 	public void flush (@NotNull FlexBatch<T> flexBatch) {
 		draw(flexBatch);
 		clear();
 	}
 
-	/** Add a Batchable to the queue. */
+	/**
+	 * Add a Batchable to the queue.
+	 *
+	 * @param batchable The Batchable to add.
+	 * */
 	public void add (@NotNull T batchable) {
 		if (batchable.isOpaque()) {
 			for (ObjectMap.Entry<T, ObjectSet<T>> entry : opaqueBatchables) {
@@ -120,8 +156,20 @@ public class BatchableSorter<T extends Batchable & SortableBatchable<T>> {
 		needSort = true;
 	}
 
-	/** Sets the camera that is used for distance comparisons to sort the blended Batchables. */
+	/** Get the camera currently used for distance comparisons.
+	 *
+	 * @return The current camera.
+	 */
+	public @NotNull Camera getCamera() {
+		return camera;
+	}
+
+	/** Sets the camera that is used for distance comparisons to sort the blended Batchables.
+	 *
+	 * @param camera The camera to use for distance comparisons.
+	 * */
 	public void setCamera (@NotNull Camera camera) {
+		this.camera = camera;
 		cameraPosition = camera.position;
 	}
 }
