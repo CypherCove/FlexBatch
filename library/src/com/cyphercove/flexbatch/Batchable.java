@@ -1,12 +1,13 @@
-/*******************************************************************************
+/*
+ ******************************************************************************
  * Copyright 2017 See AUTHORS file.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -78,8 +79,8 @@ public abstract class Batchable implements Poolable {
 	 * 
 	 * Overriding this method may produce a subclass that is incompatible with a FlexBatch that was instantiated for the superclass
 	 * type.
-	 * @param vertices
-	 * @param startingIndex
+	 * @param vertices Vertex data of the backing Mesh.
+	 * @param startingIndex Index in the data from which this Batchable's data will be written.
 	 * @param offsets The offsets of the vertex attributes.
 	 * @param vertexSize The size of a vertex in floats.
 	 * @return The number of vertices that were added. The value is unused if this is a {@link FixedSizeBatchable}, as it is
@@ -91,8 +92,8 @@ public abstract class Batchable implements Poolable {
 	 * 
 	 * Overriding this method may produce a subclass that is incompatible with a FlexBatch that was instantiated for the superclass
 	 * type.
-	 * @param triangles
-	 * @param startingIndex
+	 * @param triangles Vertex data of the backing Mesh.
+	 * @param startingIndex Index in the data from which this Batchable's data will be written.
 	 * @param firstVertex The first vertex value that should be used.
 	 * @return The number of triangle indices that were added. */
 	protected abstract int apply (@NotNull short[] triangles, int startingIndex, short firstVertex);
@@ -101,12 +102,12 @@ public abstract class Batchable implements Poolable {
 	 * FlexBatch to be generated one time so they don't have to be repeatedly updated when drawing. */
 	public static abstract class FixedSizeBatchable extends Batchable {
 
-		private static ObjectMap<Class<? extends FixedSizeBatchable>, short[]> indicesModels = new ObjectMap<>();
+		private static final ObjectMap<Class<? extends FixedSizeBatchable>, short[]> indicesModels = new ObjectMap<>();
 
 		/** Primes a FixedSizeBatchable implementation for drawing with FlexBatches that are not limited to FixedSizeBatchables. May
 		 * help avoid a one-time delay the first time one is drawn. */
 		public static <T extends FixedSizeBatchable> void prepareIndices (@NotNull Class<T> fixedSizeBatchableType) {
-			T instance = null;
+			T instance;
 			try {
 				instance = fixedSizeBatchableType.newInstance();
 			} catch (Exception e) {
