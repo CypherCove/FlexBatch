@@ -79,41 +79,43 @@ That's all! To pass the two textures, simply call the `texture()` or `textureReg
 
 	myBumpQuad.textureRegion(brickRegion).textureRegion(brickNormalMapRegion);
 	
-A bump-mapped quad probably needs to pass its angle to the shader so a binormal can be calculated in the shader for proper lighting. For this we need to add a vertex attribute by overriding the `addVertexAttributes()` method and apply the rotation value to the vertex data that's passed to FlexBatch by overriding the `apply()` method.
+A bump-mapped quad probably needs to pass its angle to the shader, so a binormal can be calculated in the shader for proper lighting. For this we need to add a vertex attribute by overriding the `addVertexAttributes()` method and apply the rotation value to the vertex data that's passed to FlexBatch by overriding the `apply()` method.
 
-	public class BumpmappedQuad extends Quad2D {
-	    protected int getNumberOfTextures () { return 2; }
-	    
-	    protected void addVertexAttributes(Array<VertexAttribute> attributes) {
-			super.addVertexAttributes(attributes);
-			attributes.add(new VertexAttribute(Usage.Generic, 1, "a_rotation"));
-		}
-		
-		protected int apply(float[] vertices, int vertexStartingIndex, 
-				AttributeOffsets offsets, int vertexSize) {
-			super.apply(vertices, vertexStartingIndex, offsets, vertexSize);
+```
+public class BumpmappedQuad extends Quad2D {
+    protected int getNumberOfTextures () { return 2; }
+    
+    protected void addVertexAttributes(Array<VertexAttribute> attributes) {
+        super.addVertexAttributes(attributes);
+        attributes.add(new VertexAttribute(Usage.Generic, 1, "a_rotation"));
+    }
+    
+    protected int apply(float[] vertices, int vertexStartingIndex, 
+            AttributeOffsets offsets, int vertexSize) {
+        super.apply(vertices, vertexStartingIndex, offsets, vertexSize);
+        
+        // Shader functions like radians, so convert
+        float rotation = this.rotation * MathUtils.degRad; 
+        
+        // The AttributeOffsets object provides an easy way to get the array index 
+        // of the first vertex's rotation attribute. generic0 corresponds with the 
+        // first generic vertex attribute in the Batchable's vertex attributes.
+        int rotationIndex = vertexStartingIndex + offsets.generic0; 
+        
+        // Apply the data to each of the four vertices
+        vertices[rotationIndex] = rotation;
+        rotationIndex += vertexSize;
+        vertices[rotationIndex] = rotation;
+        rotationIndex += vertexSize;
+        vertices[rotationIndex] = rotation;
+        rotationIndex += vertexSize;
+        vertices[rotationIndex] = rotation;
+        
+        return 4; // Quads always have 4 vertices.
+    }
+}
+```	
 
-			// Shader functions like radians, so convert
-			float rotation = this.rotation * MathUtils.degRad; 
-			
-			// The AttributeOffsets object provides an easy way to get the array index 
-			// of the first vertex's rotation attribute. generic0 corresponds with the 
-			// first generic vertex attribute in the Batchable's vertex attributes.
-			int rotationIndex = vertexStartingIndex + offsets.generic0; 
-			
-			// Apply the data to each of the four vertices
-			vertices[rotationIndex] = rotation;
-			rotationIndex += vertexSize;
-			vertices[rotationIndex] = rotation;
-			rotationIndex += vertexSize;
-			vertices[rotationIndex] = rotation;
-			rotationIndex += vertexSize;
-			vertices[rotationIndex] = rotation;
-
-			return 4; // Quads always have 4 vertices.
-		}
-	}
-	
 For an example of a bump mapped quad and matching shader, see the `FlexBatchExamplesMain` class in the examples in the source code.
 
 ### Quad3D
