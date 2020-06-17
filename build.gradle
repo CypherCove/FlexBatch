@@ -37,7 +37,7 @@ project(":example") {
         implementation project(":library")
         implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        implementation "com.cyphercove.gdx:covetools:1.2.2"
+        implementation "com.cyphercove.covetools:covetools:1.2.2"
     }
 }
 

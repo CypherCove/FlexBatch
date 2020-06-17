@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.cyphercove.covetools.utils.Disposal;
 import com.cyphercove.flexbatch.CompliantBatch;
 import com.cyphercove.flexbatch.FlexBatch;
 import com.cyphercove.flexbatch.batchable.Poly2D;
@@ -30,7 +31,6 @@ import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.BatchablePreparation;
 import com.cyphercove.flexbatch.utils.BatchableSorter;
 import com.cyphercove.flexbatch.utils.Region2D;
-import com.cyphercove.gdx.covetools.utils.Disposal;
 
 import static com.badlogic.gdx.math.MathUtils.*;
 import static com.badlogic.gdx.math.MathUtils.random;

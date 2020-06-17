@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
  * distance from camera and drawn far to near.
  * 
  * @author cypherdare */
-public class BatchableSorter<T extends Batchable & SortableBatchable<T>> {
+public class BatchableSorter<T extends Batchable & SortableBatchable> {
 
 	protected final int opaqueInitialCapacityPerTexture;
 	private final ObjectMap<T, ObjectSet<T>> opaqueBatchables; // first entered to material group

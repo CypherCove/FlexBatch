@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.cyphercove.flexbatch.Batchable;
 import com.cyphercove.flexbatch.Batchable.FixedSizeBatchable;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.BatchablePreparation;
@@ -82,6 +83,21 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 
 	protected int getNumberOfTextures () {
 		return 1;
+	}
+
+	@Override
+	public boolean hasEquivalentTextures(@NotNull Batchable other) {
+		if (other instanceof Quad) {
+			Quad quad = (Quad)other;
+			if (getNumberOfTextures() == 1)
+				return quad.textures[0] == textures[0];
+			int count = Math.min(getNumberOfTextures(), quad.getNumberOfTextures());
+			for (int i = 0; i < count; i++) {
+				if (quad.textures[i] != textures[i]) return false;
+			}
+			return true;
+		}
+		return true; // This is arbitrary because Quads should not be compared to non-Quads. Subclasses can customize this.
 	}
 
 	/** Determines whether the position data has a Z component. Must return the same constant value for every instance of the

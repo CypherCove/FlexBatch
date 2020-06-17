@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
+import com.cyphercove.flexbatch.utils.BatchableSorter;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,6 +72,16 @@ public abstract class Batchable implements Poolable {
 	/** @return The number of simultaneous textures that are drawn. This is used by the FlexBatch to determine how many texture
 	 *         uniforms to bind to the shader. Must always return the same value. */
 	protected abstract int getNumberOfTextures ();
+
+	/** Used by {@link BatchableSorter} to determine if two Batchables can be drawn without flushing in between because
+	 * their textures are equivalent. Usually, only Batchables of the same type are compared in this way, so subclasses
+	 * should only need to cast and check for {@code other} being their own type.
+	 * See {@link com.cyphercove.flexbatch.batchable.Quad#hasEquivalentTextures(Batchable) Quad.hasEquivalentTextures()}
+	 * for an example.
+	 * @param other Another Batchable
+	 * @return Whether this Batchable and the other have the same texture configuration such that they could be drawn sequentially
+	 *         without forcing the FlexBatch to flush in between. */
+	public abstract boolean hasEquivalentTextures (@NotNull Batchable other);
 
 	/** Resets the state and default parameters of the Batchable so it can be reused for an entirely new image. */
 	public abstract void refresh ();
