@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 /** A {@link Quad3D} with support for lighting through the use of normal, tangent, and binormal vertex attributes.
  * 
  * @author cypherdare */
-public class LitQuad3D<T extends LitQuad3D<T>> extends Quad3D<T> {
+public class LitQuad3D<T extends LitQuad3D<T>> extends Quad3D {
 
 	private static final Vector3 TMP1 = new Vector3();
 

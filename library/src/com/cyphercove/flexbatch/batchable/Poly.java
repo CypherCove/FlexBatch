@@ -52,6 +52,15 @@ public abstract class Poly extends Batchable implements Poolable {
 		return 1;
 	}
 
+	@Override
+	public boolean hasEquivalentTextures(@NotNull Batchable other) {
+		if (other instanceof Poly) {
+			Poly poly = (Poly)other;
+			return region.getRegion().getTexture() == poly.region.getRegion().getTexture();
+		}
+		return true; // This is arbitrary because Polys should not be compared to non-Polys. Subclasses can customize this.
+	}
+
 	/** Determines whether the position data has a Z component. Must return the same constant value for every instance of the
 	 * class.
 	 * <p>
