@@ -194,6 +194,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         renderContext.executeChanges();
         shader.begin();
         applyMatrices();
+        applyTextureUniforms();
 
         drawing = true;
         flushCalled = false;
@@ -518,6 +519,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         if (drawing) {
             shader.begin();
             applyMatrices();
+            applyTextureUniforms();
         }
     }
 
@@ -605,8 +607,11 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      * "u_texture1".
      */
     protected void applyTextureUniforms () {
+        final boolean wasPendantic = ShaderProgram.pedantic;
+        ShaderProgram.pedantic = false; // Allow shaders that don't use all the textures.
         for (int i = 0; i < textureUnitUniforms.length; i++)
             getShader().setUniformi(textureUnitUniforms[i], i);
+        ShaderProgram.pedantic = wasPendantic;
     }
 
     /**
