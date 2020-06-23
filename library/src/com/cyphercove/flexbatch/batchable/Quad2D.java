@@ -47,7 +47,7 @@ public class Quad2D extends Quad {
 		return false;
 	}
 
-	protected void prepareSharedContext (@NotNull RenderContextAccumulator renderContext) {
+	protected void prepareSharedContext (RenderContextAccumulator renderContext) {
 		super.prepareSharedContext(renderContext);
 		renderContext.setDepthMasking(false);
 	}
@@ -67,7 +67,7 @@ public class Quad2D extends Quad {
 
 	/** Sets the position of the bottom left of the texture region in world space.
 	 * @return This object for chaining. */
-	public @NotNull Quad2D position (@NotNull Vector2 position) {
+	public @NotNull Quad2D position (Vector2 position) {
 		x = position.x;
 		y = position.y;
 		return this;
@@ -78,7 +78,7 @@ public class Quad2D extends Quad {
 		return this;
 	}
 
-	protected int apply (@NotNull float[] vertices, int vertexStartingIndex, @NotNull AttributeOffsets offsets, int vertexSize) {
+	protected int apply (float[] vertices, int vertexStartingIndex, AttributeOffsets offsets, int vertexSize) {
 		super.apply(vertices, vertexStartingIndex, offsets, vertexSize);
 
 		// bottom left and top right corner points relative to origin
@@ -164,7 +164,7 @@ public class Quad2D extends Quad {
 
 	// Chain methods must be overridden to allow return of subclass type.
 
-	public @NotNull Quad2D texture (@NotNull Texture texture) {
+	public @NotNull Quad2D texture (Texture texture) {
 		super.texture(texture);
 		return this;
 	}
@@ -174,7 +174,7 @@ public class Quad2D extends Quad {
 		return this;
 	}
 
-	public @NotNull Quad2D textureRegion (@NotNull TextureRegion region) {
+	public @NotNull Quad2D textureRegion (TextureRegion region) {
 		super.textureRegion(region);
 		return this;
 	}
@@ -204,7 +204,7 @@ public class Quad2D extends Quad {
 		return this;
 	}
 
-	public @NotNull Quad2D color (@NotNull Color color) {
+	public @NotNull Quad2D color (Color color) {
 		super.color(color);
 		return this;
 	}

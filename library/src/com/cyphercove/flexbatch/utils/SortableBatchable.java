@@ -16,8 +16,6 @@
 package com.cyphercove.flexbatch.utils;
 
 import com.badlogic.gdx.math.Vector3;
-import com.cyphercove.flexbatch.Batchable;
-import org.jetbrains.annotations.NotNull;
 
 /** A 3D Batchable that can be sorted by {@link BatchableSorter}. */
 public interface SortableBatchable {
@@ -25,5 +23,5 @@ public interface SortableBatchable {
 	boolean isOpaque ();
 
 	/** @return The squared distance from the given camera position. */
-	float calculateDistanceSquared (@NotNull Vector3 camPosition);
+	float calculateDistanceSquared (Vector3 camPosition);
 }

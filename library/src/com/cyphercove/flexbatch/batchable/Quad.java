@@ -65,7 +65,7 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 			regions[i] = new Region2D();
 	}
 
-	protected final void populateTriangleIndices (@NotNull short[] triangles) {
+	protected final void populateTriangleIndices (short[] triangles) {
 		BatchablePreparation.populateQuadrangleIndices(triangles);
 	}
 
@@ -77,7 +77,7 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 		return 4;
 	}
 
-	protected void addVertexAttributes (@NotNull Array<VertexAttribute> attributes) {
+	protected void addVertexAttributes (Array<VertexAttribute> attributes) {
 		BatchablePreparation.addBaseAttributes(attributes, getNumberOfTextures(), isPosition3D(), isTextureCoordinate3D());
 	}
 
@@ -86,7 +86,7 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 	}
 
 	@Override
-	public boolean hasEquivalentTextures(@NotNull Batchable other) {
+	public boolean hasEquivalentTextures(Batchable other) {
 		if (other instanceof Quad) {
 			Quad quad = (Quad)other;
 			if (getNumberOfTextures() == 1)
@@ -114,7 +114,7 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 	 * superclass type. */
 	protected abstract boolean isTextureCoordinate3D ();
 
-	protected boolean prepareContext (@NotNull RenderContextAccumulator renderContext, int remainingVertices, int remainingIndices) {
+	protected boolean prepareContext (RenderContextAccumulator renderContext, int remainingVertices, int remainingIndices) {
 		boolean textureChanged = false;
 		for (int i = 0; i < textures.length; i++) {
 			textureChanged |= renderContext.setTextureUnit(textures[i], i);
@@ -144,7 +144,7 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 	 * <p>
 	 * This method must not be called in a Batchable that supports zero textures.
 	 * @return This object for chaining. */
-	public @NotNull Quad texture (@NotNull GLTexture texture) {
+	public @NotNull Quad texture (GLTexture texture) {
 		regionIndex = (regionIndex + 1) % getNumberOfTextures();
 		textures[regionIndex] = texture;
 		regions[regionIndex].setFull();
@@ -192,7 +192,7 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 	 * <p>
 	 * This method must not be called in a Batchable that supports zero textures.
 	 * @return This object for chaining. */
-	public @NotNull Quad textureRegion (@NotNull TextureRegion region) {
+	public @NotNull Quad textureRegion (TextureRegion region) {
 		regionIndex = (regionIndex + 1) % getNumberOfTextures();
 		textures[regionIndex] = region.getTexture();
 		regions[regionIndex].set(region);
@@ -263,7 +263,7 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 		return this;
 	}
 
-	protected int apply (@NotNull float[] vertices, int vertexStartingIndex, @NotNull AttributeOffsets offsets, int vertexSize) {
+	protected int apply (float[] vertices, int vertexStartingIndex, AttributeOffsets offsets, int vertexSize) {
 		if (!sizeSet && regions.length > 0) {
 			Region2D region = regions[0];
 			width = (region.u2 - region.u) * textures[0].getWidth();

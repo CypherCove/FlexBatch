@@ -313,7 +313,7 @@ public class RenderContextAccumulator {
 	 * @param texture The texture to bind, or null to clear any bound texture for the unit.
 	 * @param unit The texture unit to use.
 	 * @return Whether the pending texture for the unit was changed. */
-	public boolean setTextureUnit (@Nullable GLTexture texture, int unit) {
+	public boolean setTextureUnit (GLTexture texture, int unit) {
 		if (pending.textureUnits.get(unit) != texture) {
 			if (texture == null)
 				pending.textureUnits.remove(unit);

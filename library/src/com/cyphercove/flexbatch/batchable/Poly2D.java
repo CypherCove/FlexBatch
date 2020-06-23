@@ -37,7 +37,7 @@ public class Poly2D extends Poly {
 		return false;
 	}
 
-	protected void prepareSharedContext (@NotNull RenderContextAccumulator renderContext) {
+	protected void prepareSharedContext (RenderContextAccumulator renderContext) {
 		super.prepareSharedContext(renderContext);
 		renderContext.setDepthMasking(false);
 	}
@@ -57,7 +57,7 @@ public class Poly2D extends Poly {
 
 	/** Sets the position of the bottom left of the texture region in world space.
 	 * @return This object for chaining. */
-	public @NotNull Poly2D position (@NotNull Vector2 position) {
+	public @NotNull Poly2D position (Vector2 position) {
 		x = position.x;
 		y = position.y;
 		return this;
@@ -69,7 +69,7 @@ public class Poly2D extends Poly {
 	}
 
 	@Override
-	protected int apply (@NotNull float[] vertices, int vertexStartingIndex, @NotNull AttributeOffsets offsets, int vertexSize) {
+	protected int apply (float[] vertices, int vertexStartingIndex, AttributeOffsets offsets, int vertexSize) {
 		super.apply(vertices, vertexStartingIndex, offsets, vertexSize);
 		final PolygonRegion region = this.region;
 		final TextureRegion tRegion = region.getRegion();
@@ -100,7 +100,7 @@ public class Poly2D extends Poly {
 
 	// Chain methods must be overridden to allow return of subclass type.
 
-	public @NotNull Poly2D region (@NotNull PolygonRegion region) {
+	public @NotNull Poly2D region (PolygonRegion region) {
 		super.region(region);
 		return this;
 	}
@@ -115,7 +115,7 @@ public class Poly2D extends Poly {
 		return this;
 	}
 
-	public @NotNull Poly2D color (@NotNull Color color) {
+	public @NotNull Poly2D color (Color color) {
 		super.color(color);
 		return this;
 	}

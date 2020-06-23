@@ -32,7 +32,7 @@ public final class BatchablePreparation {
 	 * @param textureCoordinates3D Whether the texture coordinate attribute(s) should include a third component.
 	 * @param attributes The array to add the vertex attributes to. They are added with position and color in the first two
 	 *           available positions, followed by texture coordinates. */
-	public static void addBaseAttributes (@NotNull Array<VertexAttribute> attributes, int textureCount, boolean position3D,
+	public static void addBaseAttributes (Array<VertexAttribute> attributes, int textureCount, boolean position3D,
 										  boolean textureCoordinates3D) {
 		attributes.add(new VertexAttribute(Usage.Position, position3D ? 3 : 2, ShaderProgram.POSITION_ATTRIBUTE));
 		attributes.add(new VertexAttribute(Usage.ColorPacked, 4, ShaderProgram.COLOR_ATTRIBUTE));
@@ -120,7 +120,7 @@ public final class BatchablePreparation {
 	 * <br>1--4
 	 * </code>
 	 * @param triangles The array that will be filled with triangle indices. */
-	public static void populateQuadrangleIndices (@NotNull short[] triangles) {
+	public static void populateQuadrangleIndices (short[] triangles) {
 		short j = 0;
 		for (int i = 0; i + 5 < triangles.length; i += 6, j += 4) {
 			triangles[i] = j;

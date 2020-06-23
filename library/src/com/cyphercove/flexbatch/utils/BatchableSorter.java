@@ -60,7 +60,7 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 	 *
 	 * @param camera Initial camera to use for sorting distance.
 	 */
-	public BatchableSorter (@NotNull Camera camera) {
+	public BatchableSorter (Camera camera) {
 		this(camera, 2, 1000, 1000);
 	}
 
@@ -80,7 +80,7 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 	 *                               are flushed or drawn. A larger initial capacity may prevent backing array resizes
 	 *                               during queuing, and so may reduce the potential for stutters.
 	 */
-	public BatchableSorter (@NotNull Camera camera,
+	public BatchableSorter (Camera camera,
 							int opaqueInitialTextureCapacity,
 							int opaqueInitialCapacityPerTexture,
 							int blendedInitialCapacity) {
@@ -111,7 +111,7 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 	 *
 	 * @param flexBatch The batch to draw the batchables with.
 	 */
-	public void draw (@NotNull FlexBatch<T> flexBatch) {
+	public void draw (FlexBatch<T> flexBatch) {
 		if (needSort) {
 			blendedBatchables.sort(comparator);
 			needSort = false;
@@ -129,7 +129,7 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 	 *
 	 * @param flexBatch The batch to draw the batchables with.
 	 * */
-	public void flush (@NotNull FlexBatch<T> flexBatch) {
+	public void flush (FlexBatch<T> flexBatch) {
 		draw(flexBatch);
 		clear();
 	}
@@ -139,7 +139,7 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 	 *
 	 * @param batchable The Batchable to add.
 	 * */
-	public void add (@NotNull T batchable) {
+	public void add (T batchable) {
 		if (batchable.isOpaque()) {
 			for (ObjectMap.Entry<T, ObjectSet<T>> entry : opaqueBatchables) {
 				if (batchable.hasEquivalentTextures(entry.key)) {
@@ -168,7 +168,9 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 	 *
 	 * @param camera The camera to use for distance comparisons.
 	 * */
-	public void setCamera (@NotNull Camera camera) {
+	public void setCamera (Camera camera) {
+		if (camera == null)
+			throw new IllegalArgumentException("Camera must not be null.");
 		this.camera = camera;
 		cameraPosition = camera.position;
 	}

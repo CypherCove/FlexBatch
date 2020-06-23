@@ -74,7 +74,7 @@ import org.jetbrains.annotations.NotNull;
 public class FlexBatch<T extends Batchable> implements Disposable {
 
     public final @NotNull Class<T> batchableType;
-    private T internalBatchable;
+    private final T internalBatchable;
     private boolean havePendingInternal;
     private final Mesh mesh;
     private final AttributeOffsets attributeOffsets;
@@ -107,9 +107,9 @@ public class FlexBatch<T extends Batchable> implements Disposable {
     private final Matrix4 projectionMatrix = new Matrix4();
     private final Matrix4 combinedMatrix = new Matrix4();
 
-    private String[] textureUnitUniforms;
+    private final String[] textureUnitUniforms;
 
-    private RenderContextAccumulator renderContext;
+    private final RenderContextAccumulator renderContext;
 
     private ShaderProgram shader;
 
@@ -125,7 +125,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      * @param maxTriangles  The number of triangles this FlexBatch can batch at once, or 0 to optimize this FlexBatch to draw only
      *                      FixedSizeBatchables.
      */
-    public FlexBatch (@NotNull Class<T> batchableType, int maxVertices, int maxTriangles) {
+    public FlexBatch (Class<T> batchableType, int maxVertices, int maxTriangles) {
         // 32767 is max vertex index.
         if (maxVertices > 32767)
             throw new IllegalArgumentException("Can't have more than 32767 vertices per batch: " + maxTriangles);
@@ -263,7 +263,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      *
      * @param batchable
      */
-    public void draw (@NotNull Batchable batchable) {
+    public void draw (Batchable batchable) {
         if (havePendingInternal) drawPending();
         if (!drawing) throw new IllegalStateException("begin() must be called before drawing.");
         if (fixedIndices) {
@@ -294,7 +294,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      *                         garbage, but this may be acceptable if the current shader doesn't use them. It is assumed that the
      *                         VertexAttributes being drawn match the first of the VertexAttributes of the Batchable type.
      */
-    protected void draw (@NotNull FixedSizeBatchable batchable, @NotNull float[] explicitVertices, int offset, int count, int vertexSize) {
+    protected void draw (FixedSizeBatchable batchable, float[] explicitVertices, int offset, int count, int vertexSize) {
         if (havePendingInternal) drawPending();
         if (!drawing) throw new IllegalStateException("begin() must be called before drawing.");
         if (batchable.prepareContext(renderContext, maxVertices - vertIdx / vertexSize, 0)) {
@@ -403,8 +403,8 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      * @param trianglesOffset   Starting index of the data in the array.
      * @param trianglesCount    The number of array elements to pass. Must be a multiple of 3.
      */
-    protected void draw (@NotNull Batchable batchable, @NotNull float[] explicitVertices, int verticesOffset, int vertexDataCount, int vertexSize,
-                         @NotNull short[] explicitTriangles, int trianglesOffset, int trianglesCount) {
+    protected void draw (Batchable batchable, float[] explicitVertices, int verticesOffset, int vertexDataCount, int vertexSize,
+                         short[] explicitTriangles, int trianglesOffset, int trianglesCount) {
         if (havePendingInternal) drawPending();
         if (!drawing) throw new IllegalStateException("begin() must be called before drawing.");
         if (fixedIndices)
@@ -509,7 +509,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         return shader;
     }
 
-    public void setShader (@NotNull ShaderProgram shader) {
+    public void setShader (ShaderProgram shader) {
         if (drawing) {
             flush();
             shader.end();
@@ -578,13 +578,13 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         return transformMatrix;
     }
 
-    public void setProjectionMatrix (@NotNull Matrix4 projection) {
+    public void setProjectionMatrix (Matrix4 projection) {
         if (drawing) flush();
         projectionMatrix.set(projection);
         if (drawing) applyMatrices();
     }
 
-    public void setTransformMatrix (@NotNull Matrix4 transform) {
+    public void setTransformMatrix (Matrix4 transform) {
         if (drawing) flush();
         transformMatrix.set(transform);
         if (drawing) applyMatrices();

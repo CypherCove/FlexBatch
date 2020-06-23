@@ -76,7 +76,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 	}
 
 	/** A Quad3D that starts with blending enabled, and a common set of blend factors. */
-	public Quad3D (@NotNull Blending blending) {
+	public Quad3D (Blending blending) {
 		opaque = false;
 		switch (blending) {
 		case PremultipliedAlpha:
@@ -105,16 +105,16 @@ public class Quad3D extends Quad implements SortableBatchable {
 		return opaque;
 	}
 
-	public float calculateDistanceSquared (@NotNull Vector3 camPosition) {
+	public float calculateDistanceSquared (Vector3 camPosition) {
 		return camPosition.dst2(x, y, z);
 	}
 
-	protected void prepareSharedContext (@NotNull RenderContextAccumulator renderContext) {
+	protected void prepareSharedContext (RenderContextAccumulator renderContext) {
 		super.prepareSharedContext(renderContext);
 		renderContext.setDepthTesting(true);
 	}
 
-	protected boolean prepareContext (@NotNull RenderContextAccumulator renderContext, int remainingVertices, int remainingTriangles) {
+	protected boolean prepareContext (RenderContextAccumulator renderContext, int remainingVertices, int remainingTriangles) {
 		boolean needsFlush = super.prepareContext(renderContext, remainingVertices, remainingTriangles);
 		needsFlush |= renderContext.setBlending(!opaque);
 		if (!opaque) {
@@ -157,7 +157,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 
 	/** Enables blending and sets the blend function parameters to a commonly used pair. Blending is disabled by default.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D blend (@NotNull Blending blending) {
+	public @NotNull Quad3D blend (Blending blending) {
 		opaque = false;
 		switch (blending) {
 		case Alpha:
@@ -186,7 +186,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 
 	/** Sets the position of the center (plus current origin offset) of the texture region in world space.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D position (@NotNull Vector3 position) {
+	public @NotNull Quad3D position (Vector3 position) {
 		this.x = position.x;
 		this.y = position.y;
 		this.z = position.z;
@@ -204,7 +204,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 
 	/** Translates the current position by the given amount.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D translate (@NotNull Vector3 amount) {
+	public @NotNull Quad3D translate (Vector3 amount) {
 		this.x += amount.x;
 		this.y += amount.y;
 		this.z += amount.z;
@@ -213,7 +213,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 
 	/** Sets the rotation to a specific Quaternion.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D rotation (@NotNull Quaternion rotation) {
+	public @NotNull Quad3D rotation (Quaternion rotation) {
 		this.rotation.set(rotation);
 		return this;
 	}
@@ -227,7 +227,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 
 	/** Sets the rotation to a specific angle about an axis.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D rotation (@NotNull Vector3 axis, float angle) {
+	public @NotNull Quad3D rotation (Vector3 axis, float angle) {
 		rotation.setFromAxis(axis, angle);
 		return this;
 	}
@@ -251,7 +251,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 
 	/** Sets the rotation based on a direction vector and up vector. The input vectors <b>must be</b> normalized.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D rotation (@NotNull Vector3 direction, @NotNull Vector3 up) {
+	public @NotNull Quad3D rotation (Vector3 direction, Vector3 up) {
 		TMP1.set(up).crs(direction).nor();
 		TMP2.set(direction).crs(TMP1).nor();
 		rotation.setFromAxes(TMP1.x, TMP2.x, direction.x, TMP1.y, TMP2.y, direction.y, TMP1.z, TMP2.z, direction.z);
@@ -261,7 +261,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 	/** Sets the rotation to look at the give position, relative to the current position.
 	 * @param up The direction the top of the quad should be pointing.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D lookAt (@NotNull Vector3 position, @NotNull Vector3 up) {
+	public @NotNull Quad3D lookAt (Vector3 position, Vector3 up) {
 		TMP3.set(position).sub(x, y, z).nor();
 		TMP1.set(up).crs(TMP3).nor();
 		TMP2.set(TMP3).crs(TMP1).nor();
@@ -272,20 +272,20 @@ public class Quad3D extends Quad implements SortableBatchable {
 	/** Sets the rotation to look at the camera, relative to the current position. The quad's top side will be oriented to match
 	 * the camera's.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D billboard (@NotNull Camera camera) {
+	public @NotNull Quad3D billboard (Camera camera) {
 		return lookAt(camera.position, camera.up);
 	}
 
 	/** Sets the rotation to look at the camera, relative to the current position.
 	 * @param up The direction the top of the quad should be pointing.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D billboard (@NotNull Camera camera, @NotNull Vector3 up) {
+	public @NotNull Quad3D billboard (Camera camera, Vector3 up) {
 		return lookAt(camera.position, up);
 	}
 
 	/** Rotates the current orientation by a specific Quaternion.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D rotate (@NotNull Quaternion rotation) {
+	public @NotNull Quad3D rotate (Quaternion rotation) {
 		this.rotation.mul(rotation);
 		return this;
 	}
@@ -311,7 +311,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 		return this;
 	}
 
-	protected int apply (@NotNull float[] vertices, int vertexStartingIndex, @NotNull AttributeOffsets offsets, int vertexSize) {
+	protected int apply (float[] vertices, int vertexStartingIndex, AttributeOffsets offsets, int vertexSize) {
 		super.apply(vertices, vertexStartingIndex, offsets, vertexSize);
 		float left = -width / 2f;
 		float right = left + width;
@@ -356,7 +356,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 
 	// Chain methods must be overridden to allow return of subclass type.
 
-	public @NotNull Quad3D texture (@NotNull Texture texture) {
+	public @NotNull Quad3D texture (Texture texture) {
 		super.texture(texture);
 		return this;
 	}
@@ -366,7 +366,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 		return this;
 	}
 
-	public @NotNull Quad3D textureRegion (@NotNull TextureRegion region) {
+	public @NotNull Quad3D textureRegion (TextureRegion region) {
 		super.textureRegion(region);
 		return this;
 	}
@@ -391,7 +391,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 		return this;
 	}
 
-	public @NotNull Quad3D color (@NotNull Color color) {
+	public @NotNull Quad3D color (Color color) {
 		super.color(color);
 		return this;
 	}

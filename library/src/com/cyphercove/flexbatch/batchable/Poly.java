@@ -44,7 +44,7 @@ public abstract class Poly extends Batchable implements Poolable {
 	protected boolean sizeSet;
 	protected static final float WHITE = Color.WHITE.toFloatBits();
 
-	protected void addVertexAttributes (@NotNull Array<VertexAttribute> attributes) {
+	protected void addVertexAttributes (Array<VertexAttribute> attributes) {
 		BatchablePreparation.addBaseAttributes(attributes, getNumberOfTextures(), isPosition3D(), isTextureCoordinate3D());
 	}
 
@@ -53,7 +53,7 @@ public abstract class Poly extends Batchable implements Poolable {
 	}
 
 	@Override
-	public boolean hasEquivalentTextures(@NotNull Batchable other) {
+	public boolean hasEquivalentTextures(Batchable other) {
 		if (other instanceof Poly) {
 			Poly poly = (Poly)other;
 			return region.getRegion().getTexture() == poly.region.getRegion().getTexture();
@@ -75,9 +75,9 @@ public abstract class Poly extends Batchable implements Poolable {
 	 * superclass type. */
 	protected abstract boolean isTextureCoordinate3D ();
 
-	protected boolean prepareContext (@NotNull RenderContextAccumulator renderContext, int remainingVertices, int remainingIndices) {
+	protected boolean prepareContext (RenderContextAccumulator renderContext, int remainingVertices, int remainingIndices) {
 		boolean textureChanged = false;
-		if (region != null) textureChanged |= renderContext.setTextureUnit(region.getRegion().getTexture(), 0);
+		if (region != null) textureChanged = renderContext.setTextureUnit(region.getRegion().getTexture(), 0);
 
 		return textureChanged || remainingVertices < numVertices || remainingIndices < numIndices;
 	}
@@ -100,7 +100,7 @@ public abstract class Poly extends Batchable implements Poolable {
 
 	/** Sets the polygon region.
 	 * @return This object for chaining. */
-	public @NotNull Poly region (@NotNull PolygonRegion region) {
+	public @NotNull Poly region (PolygonRegion region) {
 		this.region = region;
 		numVertices = region.getVertices().length / 2;
 		numIndices = region.getTriangles().length;
@@ -124,7 +124,7 @@ public abstract class Poly extends Batchable implements Poolable {
 		return this;
 	}
 
-	public @NotNull Poly color (@NotNull Color color) {
+	public @NotNull Poly color (Color color) {
 		this.color = color.toFloatBits();
 		return this;
 	}
@@ -146,7 +146,7 @@ public abstract class Poly extends Batchable implements Poolable {
 		return this;
 	}
 
-	protected int apply (@NotNull float[] vertices, int vertexStartingIndex, @NotNull AttributeOffsets offsets, int vertexSize) {
+	protected int apply (float[] vertices, int vertexStartingIndex, AttributeOffsets offsets, int vertexSize) {
 		final PolygonRegion region = this.region;
 		final TextureRegion tRegion = region.getRegion();
 		if (!sizeSet) {
@@ -169,7 +169,7 @@ public abstract class Poly extends Batchable implements Poolable {
 		return 0; // handled by subclass
 	}
 
-	protected int apply (@NotNull short[] triangles, int triangleStartingIndex, short firstVertex) {
+	protected int apply (short[] triangles, int triangleStartingIndex, short firstVertex) {
 		short[] regionTriangles = region.getTriangles();
 		for (short regionTriangle : regionTriangles) {
 			triangles[triangleStartingIndex++] = (short) (regionTriangle + firstVertex);

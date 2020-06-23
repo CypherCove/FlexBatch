@@ -32,7 +32,7 @@ public class AttributeOffsets {
 	public final int position, color0, color1, color2, color3, textureCoordinate0, textureCoordinate1, textureCoordinate2,
 		textureCoordinate3, generic0, generic1, generic2, generic3, normal, tangent, biNormal;
 
-	public AttributeOffsets (@NotNull VertexAttributes attributes) {
+	public AttributeOffsets (VertexAttributes attributes) {
 		this.attributes = attributes;
 		byAlias = new ObjectIntMap<String>(attributes.size());
 		byIndex = new int[attributes.size()];
@@ -130,7 +130,7 @@ public class AttributeOffsets {
 	 * @param alias The VertexAttribute alias used to find the attribute offset.
 	 * @return The offset, or -1 if the value is not found.
 	 * */
-	public int get (@NotNull String alias) {
+	public int get (String alias) {
 		return byAlias.get(alias, -1);
 	}
 
