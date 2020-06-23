@@ -1,0 +1,54 @@
+
+multipageFruit.png
+size: 1024,512
+format: RGBA8888
+filter: MipMapLinearLinear,Linear
+repeat: none
+apple
+  rotate: false
+  xy: 16, 16
+  size: 242, 242
+  orig: 242, 242
+  offset: 0, 0
+  index: -1
+hat
+  rotate: false
+  xy: 290, 16
+  size: 242, 242
+  orig: 242, 242
+  offset: 0, 0
+  index: -1
+mohawk
+  rotate: false
+  xy: 564, 16
+  size: 242, 242
+  orig: 242, 242
+  offset: 0, 0
+  index: -1
+
+multipageFruit2.png
+size: 1024,512
+format: RGBA8888
+filter: MipMapLinearLinear,Linear
+repeat: none
+blinkFace
+  rotate: false
+  xy: 23, 23
+  size: 242, 242
+  orig: 242, 242
+  offset: 0, 0
+  index: -1
+orange
+  rotate: false
+  xy: 311, 23
+  size: 242, 242
+  orig: 242, 242
+  offset: 0, 0
+  index: -1
+plainFace
+  rotate: false
+  xy: 599, 23
+  size: 242, 242
+  orig: 242, 242
+  offset: 0, 0
+  index: -1

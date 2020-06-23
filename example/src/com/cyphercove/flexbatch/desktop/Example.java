@@ -1,3 +1,19 @@
+/*
+ ******************************************************************************
+ * Copyright 2017 See AUTHORS file.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package com.cyphercove.flexbatch.desktop;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -21,6 +37,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.cyphercove.covetools.assets.TextureAtlasCacher;
 import com.cyphercove.covetools.utils.Disposal;
 import com.cyphercove.flexbatch.CompliantBatch;
 import com.cyphercove.flexbatch.FlexBatch;
@@ -43,29 +60,31 @@ public class Example extends ApplicationAdapter {
 	FlexBatch<SolidQuad> solidQuadBatch;
 	FlexBatch<Poly2D> poly2dBatch;
 	FlexBatch<Quad3D> quad3dBatch;
+	FlexBatch<TripleQuad> tripleOverlayBatch;
 	BatchableSorter<Quad3D> quad3dSorter;
 	PerspectiveCamera pCam;
-	ShaderProgram solidShader, typicalShader, bumpShader;
+	ShaderProgram solidShader, typicalShader, bumpShader, tripleOverlayShader;
 	Stage stage;
 	Skin skin;
 	Viewport viewport;
-	TextureAtlas atlas, bumpAtlas;
+	TextureAtlas atlas, bumpAtlas, tripleOverlayAtlas;
 	Test test = Test.values()[0];
-	Array<BumpQuad> quad2ds = new Array<BumpQuad>(), bumpQuads = new Array<BumpQuad>();
-	Array<Quad3D> quad3ds = new Array<Quad3D>();
+	Array<BumpQuad> quad2ds = new Array<>(), bumpQuads = new Array<>();
+	Array<Quad3D> quad3ds = new Array<>();
 	Sprite testSprite;
 	BitmapFont testFont;
 	PolygonRegion polygonRegion;
+	final TripleOverlayRegions tripleOverlayRegions = new TripleOverlayRegions();
 	private static final int W = 800, H = 480;
 	float elapsed;
-	Array<Item> items = new Array<Item>();
+	Array<Item> items = new Array<>();
 	Vector3 bumpLightPosition = new Vector3();
 	boolean bumpLightFollowCursor;
 	float bumpLightPathRadius = 0.4f * Math.min(W, H);
 	float bumpOrbitRadius = 0.45f * Math.min(W, H);
 
 	private enum Test {
-		BumpMapped2D, Poly2D, Quad3D, CompliantBatch, SolidQuads
+		BumpMapped2D, Poly2D, Quad3D, CompliantBatch, SolidQuads, TripleOverlay
 	}
 
 	public static class SolidQuad extends Quad2D {
@@ -133,6 +152,12 @@ public class Example extends ApplicationAdapter {
 		}
 	}
 
+	public static class TripleQuad extends Quad2D {
+		protected int getNumberOfTextures() {
+			return 3;
+		}
+	}
+
 	@Override
 	public void create() {
 		random.setSeed(0);
@@ -166,7 +191,7 @@ public class Example extends ApplicationAdapter {
 		spriteBatch = new SpriteBatch(100);
 		spriteBatch.enableBlending();
 
-		quad2dBatch = new CompliantBatch<BumpQuad>(BumpQuad.class, 4000, true);
+		quad2dBatch = new CompliantBatch<>(BumpQuad.class, 4000, true);
 		quad2dBatch.enableBlending();
 		for (int i = 0; i < 80; i++) { // The second texture and extra
 			// attributes for these will go unused
@@ -176,7 +201,7 @@ public class Example extends ApplicationAdapter {
 			quad2ds.add(sprite);
 		}
 
-		solidQuadBatch = new FlexBatch<SolidQuad>(SolidQuad.class, 10, 0);
+		solidQuadBatch = new FlexBatch<>(SolidQuad.class, 10, 0);
 		solidShader = new ShaderProgram(BatchablePreparation.generateGenericVertexShader(0),
 				BatchablePreparation.generateGenericFragmentShader(0));
 		solidQuadBatch.setShader(solidShader);
@@ -194,14 +219,14 @@ public class Example extends ApplicationAdapter {
 		pCam.position.set(0, 20, -20);
 		pCam.lookAt(0, 0, 0);
 		pCam.update();
-		quad3dBatch = new FlexBatch<Quad3D>(Quad3D.class, 4000, 0);
+		quad3dBatch = new FlexBatch<>(Quad3D.class, 4000, 0);
 		quad3dBatch.setShader(typicalShader);
-		quad3dSorter = new BatchableSorter<Quad3D>(pCam);
+		quad3dSorter = new BatchableSorter<>(pCam);
 		for (int i = 0; i < 500; i++) {
 			quad3ds.add(makeQuad3D(10, 40));
 		}
 
-		poly2dBatch = new FlexBatch<Poly2D>(Poly2D.class, 1000, 2000);
+		poly2dBatch = new FlexBatch<>(Poly2D.class, 1000, 2000);
 		poly2dBatch.setShader(typicalShader);
 
 		bumpShader = new ShaderProgram(Gdx.files.internal("bump.vert").readString(),
@@ -237,8 +262,18 @@ public class Example extends ApplicationAdapter {
 			quad.centerOrigin();
 			bumpQuads.add(quad);
 		}
-		bumpBatch = new FlexBatch<BumpQuad>(BumpQuad.class, 100, 0);
+		bumpBatch = new FlexBatch<>(BumpQuad.class, 100, 0);
 		bumpBatch.setShader(bumpShader);
+
+		tripleOverlayShader = new ShaderProgram(Gdx.files.internal("tripleOverlay.vert").readString(),
+				Gdx.files.internal("tripleOverlay.frag").readString());
+		if (!tripleOverlayShader.isCompiled())
+			Gdx.app.log("triple overlay shader error", tripleOverlayShader.getLog());
+		tripleOverlayAtlas = new TextureAtlas("multipageFruit.atlas");
+		TextureAtlasCacher.cacheRegions(tripleOverlayAtlas, tripleOverlayRegions, true);
+
+		tripleOverlayBatch = new FlexBatch<>(TripleQuad.class, 100, 0);
+		tripleOverlayBatch.setShader(tripleOverlayShader);
 
 		setupUI();
 
@@ -362,6 +397,66 @@ public class Example extends ApplicationAdapter {
 				solidQuadBatch.draw().size(20, 70).color(Color.MAGENTA).position(400, 430).origin(10, 35)
 						.rotation(-elapsed * 45);
 				solidQuadBatch.end();
+				break;
+			case TripleOverlay:
+				tripleOverlayBatch.setProjectionMatrix(viewport.getCamera().combined);
+				tripleOverlayBatch.begin();
+				// Mix and match the pieces that come from different pages
+				float size = H / 4f;
+				float leftPad = 0.05f * W;
+				float horizontalPad = (0.9f * W - 4 * size) / 3f;
+				float bottomPad = 0.05f * H;
+				float verticalPad = 0.9f * H - 2 * size;
+				tripleOverlayBatch.draw()
+						.textureRegion(tripleOverlayRegions.apple)
+						.textureRegion(tripleOverlayRegions.plainFace)
+						.textureRegion(tripleOverlayRegions.hat)
+						.position(leftPad, bottomPad)
+						.size(size, size);
+				tripleOverlayBatch.draw()
+						.textureRegion(tripleOverlayRegions.apple)
+						.textureRegion(tripleOverlayRegions.plainFace)
+						.textureRegion(tripleOverlayRegions.mohawk)
+						.position(leftPad + size + horizontalPad, bottomPad)
+						.size(size, size);
+				tripleOverlayBatch.draw()
+						.textureRegion(tripleOverlayRegions.apple)
+						.textureRegion(tripleOverlayRegions.blinkFace)
+						.textureRegion(tripleOverlayRegions.hat)
+						.position(leftPad + 2 * (size + horizontalPad), bottomPad)
+						.size(size, size);
+				tripleOverlayBatch.draw()
+						.textureRegion(tripleOverlayRegions.apple)
+						.textureRegion(tripleOverlayRegions.blinkFace)
+						.textureRegion(tripleOverlayRegions.mohawk)
+						.position(leftPad + 3 * (size + horizontalPad), bottomPad)
+						.size(size, size);
+				tripleOverlayBatch.draw()
+						.textureRegion(tripleOverlayRegions.orange)
+						.textureRegion(tripleOverlayRegions.plainFace)
+						.textureRegion(tripleOverlayRegions.hat)
+						.position(leftPad, bottomPad + size + verticalPad)
+						.size(size, size);
+				tripleOverlayBatch.draw()
+						.textureRegion(tripleOverlayRegions.orange)
+						.textureRegion(tripleOverlayRegions.plainFace)
+						.textureRegion(tripleOverlayRegions.mohawk)
+						.position(leftPad + size + horizontalPad, bottomPad + size + verticalPad)
+						.size(size, size);
+				tripleOverlayBatch.draw()
+						.textureRegion(tripleOverlayRegions.orange)
+						.textureRegion(tripleOverlayRegions.blinkFace)
+						.textureRegion(tripleOverlayRegions.hat)
+						.position(leftPad + 2 * (size + horizontalPad), bottomPad + size + verticalPad)
+						.size(size, size);
+				tripleOverlayBatch.draw()
+						.textureRegion(tripleOverlayRegions.orange)
+						.textureRegion(tripleOverlayRegions.blinkFace)
+						.textureRegion(tripleOverlayRegions.mohawk)
+						.position(leftPad + 3 * (size + horizontalPad), bottomPad + size + verticalPad)
+						.size(size, size);
+				tripleOverlayBatch.end();
+				break;
 		}
 
 		stage.act();
@@ -372,7 +467,7 @@ public class Example extends ApplicationAdapter {
 		stage = new Stage(new ScreenViewport(), quad2dBatch);
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-		final SelectBox<Test> selectBox = new SelectBox<Test>(skin);
+		final SelectBox<Test> selectBox = new SelectBox<>(skin);
 		selectBox.setItems(Test.values());
 		selectBox.addListener(new ChangeListener() {
 			public void changed(ChangeEvent event, Actor actor) {
@@ -402,7 +497,7 @@ public class Example extends ApplicationAdapter {
 	public void dispose() {
 		Disposal.clear(this);
 
-		Array<Object> fieldChecks = new Array<Object>();
+		Array<Object> fieldChecks = new Array<>();
 		fieldChecks.add(texture);
 		fieldChecks.add(bumpBatch);
 		fieldChecks.add(poly2dBatch);
@@ -430,6 +525,15 @@ public class Example extends ApplicationAdapter {
 		return quad;
 	}
 
+	static class TripleOverlayRegions {
+		public TextureRegion apple;
+		public TextureRegion orange;
+		public TextureRegion plainFace;
+		public TextureRegion blinkFace;
+		public TextureRegion mohawk;
+		public TextureRegion hat;
+	}
+
 	static class Item {
 		public final Color color = new Color();
 		float x, y, width, height, scaleX = 1, scaleY = 1, rotation;
@@ -443,7 +547,7 @@ public class Example extends ApplicationAdapter {
 		}
 	}
 
-	private InputAdapter bumpInputAdapter = new InputAdapter() {
+	private final InputAdapter bumpInputAdapter = new InputAdapter() {
 
 		final Vector3 tmp = new Vector3();
 
