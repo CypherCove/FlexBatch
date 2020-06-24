@@ -4,9 +4,9 @@ FlexBatch is a library for [LibGDX](https://github.com/libgdx/libgdx) used for b
 ## Project Dependency
 The current version of FlexBatch is available via JCenter. **Note the new group ID! FlexBatch has moved as of the 1.2.0 version.**
 
-    compile "com.cyphercove.flexbatch:flexbatch:1.2.1"
+    compile "com.cyphercove.flexbatch:flexbatch:1.2.2"
 
-Version 1.2.0 and up use LibGDX 1.9.9. FlexBatch does not (yet) support GWT.
+Version 1.2.2 uses LibGDX 1.9.10. FlexBatch does not (yet) support GWT.
 
 See [CHANGES.md](Changes.md) for the change log, which lists breaking changes and LibGDX version increases.
 
