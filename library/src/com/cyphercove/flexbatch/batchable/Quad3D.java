@@ -225,14 +225,14 @@ public class Quad3D extends Quad implements SortableBatchable {
 		return this;
 	}
 
-	/** Sets the rotation to a specific angle about an axis.
+	/** Sets the rotation in degrees to a specific angle about an axis.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D rotation (Vector3 axis, float angle) {
-		rotation.setFromAxis(axis, angle);
+	public @NotNull Quad3D rotation (Vector3 axis, float degrees) {
+		rotation.setFromAxis(axis, degrees);
 		return this;
 	}
 
-	/** Sets the rotation to specific Euler angles.
+	/** Sets the rotation to specific Euler angles in degrees.
 	 * @return This object for chaining. */
 	public @NotNull Quad3D rotation (float yaw, float pitch, float roll) {
 		rotation.setEulerAngles(yaw, pitch, roll);
@@ -292,22 +292,22 @@ public class Quad3D extends Quad implements SortableBatchable {
 
 	/** Rotates from the current orientation by a specific angle about the X axis.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D rotateX (float angle) {
-		rotation.mul(TMPQ.setFromAxis(1, 0, 0, angle));
+	public @NotNull Quad3D rotateX (float degrees) {
+		rotation.mul(TMPQ.setFromAxis(1, 0, 0, degrees));
 		return this;
 	}
 
 	/** Rotates from the current orientation by a specific angle about the Y axis.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D rotateY (float angle) {
-		rotation.mul(TMPQ.setFromAxis(0, 1, 0, angle));
+	public @NotNull Quad3D rotateY (float degrees) {
+		rotation.mul(TMPQ.setFromAxis(0, 1, 0, degrees));
 		return this;
 	}
 
 	/** Rotates from the current orientation by a specific angle about the Z axis.
 	 * @return This object for chaining. */
-	public @NotNull Quad3D rotateZ (float angle) {
-		rotation.mul(TMPQ.setFromAxis(0, 0, 1, angle));
+	public @NotNull Quad3D rotateZ (float degrees) {
+		rotation.mul(TMPQ.setFromAxis(0, 0, 1, degrees));
 		return this;
 	}
 
