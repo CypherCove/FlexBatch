@@ -1,4 +1,5 @@
 ### Version 1.2.3
+ * **[Breaking]** Removed Quad3D and LitQuad3D constructors that have blending parameters because they falsely imply that blend state is inherent to the instance whereas the `refresh()` method always resets blending to opaque.
 
 ### Version 1.2.2
  * Update to LibGDX 1.9.10
