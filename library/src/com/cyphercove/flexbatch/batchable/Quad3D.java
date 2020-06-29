@@ -64,33 +64,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 		Additive
 	}
 
-	/** A Quad3D that starts opaque. */
 	public Quad3D () {
-	}
-
-	/** A Quad3D that starts with blending enabled, with the specified blend factors. */
-	public Quad3D (int srcBlendFactor, int dstBlendFactor) {
-		opaque = false;
-		this.srcBlendFactor = srcBlendFactor;
-		this.dstBlendFactor = dstBlendFactor;
-	}
-
-	/** A Quad3D that starts with blending enabled, and a common set of blend factors. */
-	public Quad3D (Blending blending) {
-		opaque = false;
-		switch (blending) {
-		case PremultipliedAlpha:
-			srcBlendFactor = GL20.GL_ONE;
-			dstBlendFactor = GL20.GL_ONE_MINUS_SRC_ALPHA;
-			break;
-		case Additive:
-			srcBlendFactor = dstBlendFactor = GL20.GL_ONE;
-			break;
-		case Alpha:
-			srcBlendFactor = GL20.GL_ALPHA;
-			dstBlendFactor = GL20.GL_ONE_MINUS_SRC_ALPHA;
-			break;
-		}
 	}
 
 	protected final boolean isPosition3D () {

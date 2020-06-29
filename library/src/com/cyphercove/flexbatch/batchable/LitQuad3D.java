@@ -29,18 +29,7 @@ public class LitQuad3D<T extends LitQuad3D<T>> extends Quad3D {
 
 	private static final Vector3 TMP1 = new Vector3();
 
-	/** A LitQuad3D that starts opaque. */
 	public LitQuad3D () {
-	}
-
-	/** A LitQuad3D that starts with blending enabled, with the specified blend factors. */
-	public LitQuad3D (int srcBlendFactor, int dstBlendFactor) {
-		super(srcBlendFactor, dstBlendFactor);
-	}
-
-	/** A LitQuad3D that starts with blending enabled, and a common set of blend factors. */
-	public LitQuad3D (Blending blending) {
-		super(blending);
 	}
 
 	protected void addVertexAttributes (Array<VertexAttribute> attributes) {
