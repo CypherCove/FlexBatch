@@ -504,14 +504,34 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         vertIdx += vertexDataPerBatchable;
     }
 
-    public @NotNull ShaderProgram getShader () {
-        if (shader == null)
-            throw new IllegalStateException("Cannot get the shader before it has been assigned.");
+    /**
+     * Returns the current ShaderProgram.
+     * @return the ShaderProgram set for this batch, or null if none has been set yet.
+     */
+    public ShaderProgram getShader () {
         return shader;
     }
 
+    /**
+     * Returns the current ShaderProgram.
+     * @throws IllegalStateException if a ShaderProgram has not yet been assigned.
+     * @return the ShaderProgram set for this batch.
+     */
+    public @NotNull ShaderProgram requireShader () {
+        if (shader == null)
+            throw new IllegalStateException("The ShaderProgram has not been assigned.");
+        return shader;
+    }
+
+    /**
+     * Sets the ShaderProgram to be used with this batch. Can be set to null to clear it, but this must not be done
+     * between {@link #begin()} and {$link #end()}.
+     * @param shader The ShaderProgram to use, or null to clear it when not between {@link #begin()} and {$link #end()}.
+     */
     public void setShader (ShaderProgram shader) {
         if (drawing) {
+            if (shader == null)
+                throw new IllegalStateException("Cannot set shader to null between begin() and end().");
             flush();
             shader.end();
         }

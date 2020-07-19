@@ -91,6 +91,32 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 		}
 	}
 
+	/**
+	 * Returns the current ShaderProgram, which may be the default. Is never null.
+	 *
+	 * The return type is not marked as {@link NotNull} so Kotlin will not enforce nonnull values to be set with the
+	 * corresponding setter.
+	 * @return the ShaderProgram set for this batch, or the default if none is set.
+	 */
+	@Override
+	public ShaderProgram getShader() {
+		return super.getShader();
+	}
+
+	/**
+	 * Returns the current ShaderProgram, which may be the default. For CompliantBatch, this is no different than
+	 * calling {$link #getShader()}.
+	 * @return the ShaderProgram set for this batch, or the default if none is set.
+	 */
+	@Override
+	public @NotNull ShaderProgram requireShader() {
+		return getShader();
+	}
+
+	/**
+	 * Sets the ShaderProgram to be used with this batch. Can be set to null to restore use of the default shader.
+	 * @param shader The ShaderProgram to use, or null to switch to the default shader.
+	 */
 	@Override
 	public void setShader (ShaderProgram shader) {
 		if (shader == null) shader = defaultShader;
