@@ -264,6 +264,13 @@ public class Quad3D extends Quad implements SortableBatchable {
 		return this;
 	}
 
+	/** Rotates from the current orientation by a specific angle about the given axis.
+	 * @return This object for chaining. */
+	public @NotNull Quad3D rotate (Vector3 axis, float degrees) {
+		rotation.mul(TMPQ.setFromAxis(axis, degrees));
+		return this;
+	}
+
 	/** Rotates from the current orientation by a specific angle about the X axis.
 	 * @return This object for chaining. */
 	public @NotNull Quad3D rotateX (float degrees) {
