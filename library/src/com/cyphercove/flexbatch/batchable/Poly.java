@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* ******************************************************************************
  * Copyright 2017 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 package com.cyphercove.flexbatch.batchable;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -30,9 +31,10 @@ import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
 import org.jetbrains.annotations.NotNull;
 
 /** A Batchable supporting a single {@link PolygonRegion}, with color, position, scale, and an origin offset.
- * 
+ *
+ * @param <T> The type returned by the chain methods. The object must be able to be cast to this type.
  * @author cypherdare */
-public abstract class Poly extends Batchable implements Poolable {
+public abstract class Poly<T extends Poly<T>> extends Batchable implements Poolable {
 	protected PolygonRegion region;
 	protected int numVertices, numIndices;
 	public float x, y, color = WHITE, originX, originY, scaleX = 1, scaleY = 1;
@@ -48,6 +50,12 @@ public abstract class Poly extends Batchable implements Poolable {
 		BatchablePreparation.addBaseAttributes(attributes, getNumberOfTextures(), isPosition3D(), isTextureCoordinate3D());
 	}
 
+	@Override
+	protected int getPrimitiveType() {
+		return GL20.GL_TRIANGLES;
+	}
+
+	@Override
 	protected final int getNumberOfTextures () {
 		return 1;
 	}
@@ -55,7 +63,7 @@ public abstract class Poly extends Batchable implements Poolable {
 	@Override
 	public boolean hasEquivalentTextures(Batchable other) {
 		if (other instanceof Poly) {
-			Poly poly = (Poly)other;
+			Poly<?> poly = (Poly<?>)other;
 			return region.getRegion().getTexture() == poly.region.getRegion().getTexture();
 		}
 		return true; // This is arbitrary because Polys should not be compared to non-Polys. Subclasses can customize this.
@@ -75,6 +83,7 @@ public abstract class Poly extends Batchable implements Poolable {
 	 * superclass type. */
 	protected abstract boolean isTextureCoordinate3D ();
 
+	@Override
 	protected boolean prepareContext (RenderContextAccumulator renderContext, int remainingVertices, int remainingIndices) {
 		boolean textureChanged = false;
 		if (region != null) textureChanged = renderContext.setTextureUnit(region.getRegion().getTexture(), 0);
@@ -82,8 +91,9 @@ public abstract class Poly extends Batchable implements Poolable {
 		return textureChanged || remainingVertices < numVertices || remainingIndices < numIndices;
 	}
 
-	public void refresh () { // Does not reset textures, in the interest of speed. There is no need for the concept of default
-										// textures.
+	@Override
+	public void refresh () {
+		// Does not reset textures, in the interest of speed. There is no need for the concept of default textures.
 		x = y = originX = originY = 0;
 		scaleX = scaleY = 1;
 		color = WHITE;
@@ -91,6 +101,7 @@ public abstract class Poly extends Batchable implements Poolable {
 	}
 
 	/** Resets the state of the object and drops Texture references to prepare it for returning to a {@link Pool}. */
+	@Override
 	public void reset () {
 		refresh();
 		region = null;
@@ -100,52 +111,60 @@ public abstract class Poly extends Batchable implements Poolable {
 
 	/** Sets the polygon region.
 	 * @return This object for chaining. */
-	public @NotNull Poly region (PolygonRegion region) {
+	public @NotNull T region (PolygonRegion region) {
 		this.region = region;
 		numVertices = region.getVertices().length / 2;
 		numIndices = region.getTriangles().length;
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
-	public @NotNull Poly size (float width, float height) {
+	public @NotNull T size (float width, float height) {
 		this.width = width;
 		this.height = height;
 		sizeSet = true;
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
 	/** Sets the center point for transformations (rotation and scale). For {@link Quad2D}, this is relative to the bottom left
 	 * corner of the texture region. For {@link Quad3D}, this is relative to the center of the texture region and is in the local
 	 * coordinate system.
 	 * @return This object for chaining. */
-	public @NotNull Poly origin (float originX, float originY) {
+	public @NotNull T origin (float originX, float originY) {
 		this.originX = originX;
 		this.originY = originY;
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
-	public @NotNull Poly color (Color color) {
+	public @NotNull T color (Color color) {
 		this.color = color.toFloatBits();
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
-	public @NotNull Poly color (float r, float g, float b, float a) {
+	public @NotNull T color (float r, float g, float b, float a) {
 		int intBits = (int)(255 * a) << 24 | (int)(255 * b) << 16 | (int)(255 * g) << 8 | (int)(255 * r);
 		color = NumberUtils.intToFloatColor(intBits);
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
-	public @NotNull Poly color (float floatBits) {
+	public @NotNull T color (float floatBits) {
 		color = floatBits;
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
-	public @NotNull Poly scale (float scaleX, float scaleY) {
+	public @NotNull T scale (float scaleX, float scaleY) {
 		this.scaleX = scaleX;
 		this.scaleY = scaleY;
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
+	@Override
 	protected int apply (float[] vertices, int vertexStartingIndex, AttributeOffsets offsets, int vertexSize) {
 		final PolygonRegion region = this.region;
 		final TextureRegion tRegion = region.getRegion();
@@ -169,10 +188,10 @@ public abstract class Poly extends Batchable implements Poolable {
 		return 0; // handled by subclass
 	}
 
-	protected int apply (short[] triangles, int triangleStartingIndex, short firstVertex) {
+	protected int apply (short[] indices, int triangleStartingIndex, short firstVertex) {
 		short[] regionTriangles = region.getTriangles();
 		for (short regionTriangle : regionTriangles) {
-			triangles[triangleStartingIndex++] = (short) (regionTriangle + firstVertex);
+			indices[triangleStartingIndex++] = (short) (regionTriangle + firstVertex);
 		}
 		return numIndices;
 	}

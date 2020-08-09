@@ -1,5 +1,4 @@
-/*
- ******************************************************************************
+/* ******************************************************************************
  * Copyright 2017 See AUTHORS file.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +15,7 @@
  ******************************************************************************/
 package com.cyphercove.flexbatch;
 
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -102,20 +102,44 @@ public abstract class Batchable implements Poolable {
 	 * 
 	 * Overriding this method may produce a subclass that is incompatible with a FlexBatch that was instantiated for the superclass
 	 * type.
-	 * @param triangles Vertex data of the backing Mesh.
+	 * @param indices Vertex data of the backing Mesh.
 	 * @param startingIndex Index in the data from which this Batchable's data will be written.
 	 * @param firstVertex The first vertex value that should be used.
 	 * @return The number of triangle indices that were added. */
-	protected abstract int apply (short[] triangles, int startingIndex, short firstVertex);
+	protected abstract int apply (short[] indices, int startingIndex, short firstVertex);
 
-	/** Parent class for Batchables that all have the same number of vertices and triangles. This allows all triangle indices for a
-	 * FlexBatch to be generated one time so they don't have to be repeatedly updated when drawing. */
+	/** @return The type of OpenGL primitive to draw. Must always return the same value among all instances of a
+	 *         class. Should be one of
+	 * <ul>
+	 *     <li>{@link GL20#GL_POINTS}</li>
+	 *     <li>{@link GL20#GL_LINES}</li>
+	 *     <li>{@link GL20#GL_TRIANGLES}</li>
+	 * </ul>
+	 */
+	protected abstract int getPrimitiveType ();
+
+	/** @return The number of indices used for each OpenGL primitive, where primitive type is determined by
+	 * {@link #getPrimitiveType()}. Since {@link com.badlogic.gdx.graphics.GL20#GL_POINTS GL20.GL_POINTS} do not use
+	 * indices, 0 is returned if the primitive type is points.
+	 */
+	protected final int getIndicesPerPrimitive () {
+		switch (getPrimitiveType()) {
+			case GL20.GL_POINTS: return 0;
+			case GL20.GL_LINES: return 2;
+			default: return 3;
+		}
+	}
+
+	/** Parent class for Batchables that all have the same number of vertices and lines/triangles. This allows all
+	 * indices for a FlexBatch to be generated one time so they don't have to be repeatedly updated when drawing.
+	 * This type should not be used for a primitive type of {@link GL20#GL_POINTS}, since points do not need indices. */
 	public static abstract class FixedSizeBatchable extends Batchable {
 
 		private static final ObjectMap<Class<? extends FixedSizeBatchable>, short[]> indicesModels = new ObjectMap<>();
 
-		/** Primes a FixedSizeBatchable implementation for drawing with FlexBatches that are not limited to FixedSizeBatchables. May
-		 * help avoid a one-time delay the first time one is drawn. */
+		/** Primes a FixedSizeBatchable implementation for drawing with FlexBatches that are not limited to FixedSizeBatchables.
+		 * Calling this directly before beginning drawing the first time may avoid a one-time delay the first time one
+		 * is drawn. */
 		public static <T extends FixedSizeBatchable> void prepareIndices (Class<T> fixedSizeBatchableType) {
 			T instance;
 			try {
@@ -123,14 +147,14 @@ public abstract class Batchable implements Poolable {
 			} catch (Exception e) {
 				throw new IllegalArgumentException("Batchable classes must be public and have an empty constructor.", e);
 			}
-			short[] model = new short[instance.getTrianglesPerBatchable() * 3];
-			instance.populateTriangleIndices(model);
+			short[] model = new short[instance.getPrimitivesPerBatchable() * instance.getIndicesPerPrimitive()];
+			instance.populateIndices(model);
 			indicesModels.put(fixedSizeBatchableType, model);
 		}
 
-		/** @return The number of triangles drawn for each Batchable. Must always return the same value among all instances of a
-		 *         class. */
-		protected abstract int getTrianglesPerBatchable ();
+		/** @return The number of OpenGL primitives drawn for each Batchable. Must always return the same value among
+		 *         all instances of a class. */
+		protected abstract int getPrimitivesPerBatchable();
 
 		/** @return The number of vertices used for each Batchable. Must always return the same value among all instances of a
 		 *         class. */
@@ -139,25 +163,29 @@ public abstract class Batchable implements Poolable {
 		/** Populate the fixed triangle array for the FlexBatch's mesh. This is called only once on one of the FlexBatch's internal
 		 * Batchable instances, or once the first time an instance is drawn with a FlexBatch that is not limited to
 		 * FixedSizeBatchables.
-		 * @param triangles An array of triangle indices that, before this method returns, must be fully populated for drawing a
+		 * <p>
+		 * This method is unused if {@link #getPrimitiveType()} is {@link GL20#GL_POINTS}.
+		 * @param indices An array of indices that, before this method returns, must be fully populated for drawing a
 		 *           series of this Batchable type. */
-		protected abstract void populateTriangleIndices (short[] triangles);
+		protected abstract void populateIndices(short[] indices);
 
-		/** Called by FlexBatch to apply triangle index data, only if this FixedSizeBatchable is drawn by a FlexBatch that is not
+		/** Called by FlexBatch to apply vertex index data, only if this FixedSizeBatchable is drawn by a FlexBatch that is not
 		 * limited to drawing FixedSizeBatchables. See {@link Batchable#apply(short[], int, short)} */
-		protected final int apply (short[] triangles, int triangleStartingIndex, short firstVertex) {
+		@Override
+		protected final int apply (short[] indices, int indicesStartingIndex, short firstVertex) {
 			short[] model = indicesModels.get(getClass());
 			if (model == null) {
-				model = new short[getTrianglesPerBatchable() * 3];
-				populateTriangleIndices(model);
+				model = new short[getPrimitivesPerBatchable() * getIndicesPerPrimitive()];
+				populateIndices(model);
 				indicesModels.put(getClass(), model);
 			}
 
 			for (short value : model) {
-				triangles[triangleStartingIndex++] = (short) (value + firstVertex);
+				indices[indicesStartingIndex++] = (short) (value + firstVertex);
 			}
 
 			return model.length;
 		}
 	}
+
 }

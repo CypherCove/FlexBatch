@@ -16,10 +16,7 @@
  ******************************************************************************/
 package com.cyphercove.flexbatch.desktop;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -41,13 +38,8 @@ import com.cyphercove.covetools.assets.TextureAtlasCacher;
 import com.cyphercove.covetools.utils.Disposal;
 import com.cyphercove.flexbatch.CompliantBatch;
 import com.cyphercove.flexbatch.FlexBatch;
-import com.cyphercove.flexbatch.batchable.Poly2D;
-import com.cyphercove.flexbatch.batchable.Quad2D;
-import com.cyphercove.flexbatch.batchable.Quad3D;
-import com.cyphercove.flexbatch.utils.AttributeOffsets;
-import com.cyphercove.flexbatch.utils.BatchablePreparation;
-import com.cyphercove.flexbatch.utils.BatchableSorter;
-import com.cyphercove.flexbatch.utils.Region2D;
+import com.cyphercove.flexbatch.batchable.*;
+import com.cyphercove.flexbatch.utils.*;
 
 import static com.badlogic.gdx.math.MathUtils.*;
 import static com.badlogic.gdx.math.MathUtils.random;
@@ -60,10 +52,12 @@ public class Example extends ApplicationAdapter {
 	FlexBatch<SolidQuad> solidQuadBatch;
 	FlexBatch<Poly2D> poly2dBatch;
 	FlexBatch<Quad3D> quad3dBatch;
+	FlexBatch<Point3D> point3DBatch;
 	FlexBatch<TripleQuad> tripleOverlayBatch;
 	BatchableSorter<Quad3D> quad3dSorter;
+	BatchableSorter<Point3D> point3dSorter;
 	PerspectiveCamera pCam;
-	ShaderProgram solidShader, typicalShader, bumpShader, tripleOverlayShader;
+	ShaderProgram solidShader, typicalShader, bumpShader, point3dShader, tripleOverlayShader;
 	Stage stage;
 	Skin skin;
 	Viewport viewport;
@@ -71,6 +65,7 @@ public class Example extends ApplicationAdapter {
 	Test test = Test.values()[0];
 	Array<BumpQuad> quad2ds = new Array<>(), bumpQuads = new Array<>();
 	Array<Quad3D> quad3ds = new Array<>();
+	Array<Point3D> point3ds = new Array<>();
 	Sprite testSprite;
 	BitmapFont testFont;
 	PolygonRegion polygonRegion;
@@ -84,7 +79,7 @@ public class Example extends ApplicationAdapter {
 	float bumpOrbitRadius = 0.45f * Math.min(W, H);
 
 	private enum Test {
-		BumpMapped2D, Poly2D, Quad3D, CompliantBatch, SolidQuads, TripleOverlay
+		BumpMapped2D, Poly2D, Quad3D, Point3D, CompliantBatch, SolidQuads, TripleOverlay
 	}
 
 	public static class SolidQuad extends Quad2D {
@@ -226,13 +221,24 @@ public class Example extends ApplicationAdapter {
 			quad3ds.add(makeQuad3D(10, 40));
 		}
 
+		point3dShader = new ShaderProgram(Gdx.files.internal("point3d.vert").readString(),
+				Gdx.files.internal("point3d.frag").readString());
+		if (!point3dShader.isCompiled())
+			Gdx.app.error("point3d shader error", point3dShader.getLog());
+		point3DBatch = new FlexBatch<>(Point3D.class, 1000, 0);
+		point3DBatch.setShader(point3dShader);
+		point3dSorter = new BatchableSorter<>(pCam);
+		for (int i = 0; i < 500; i++) {
+			point3ds.add(makePoint3D(10, 40));
+		}
+
 		poly2dBatch = new FlexBatch<>(Poly2D.class, 1000, 2000);
 		poly2dBatch.setShader(typicalShader);
 
 		bumpShader = new ShaderProgram(Gdx.files.internal("bump.vert").readString(),
 				Gdx.files.internal("bump.frag").readString());
 		if (!bumpShader.isCompiled())
-			Gdx.app.log("bump shader error", bumpShader.getLog());
+			Gdx.app.error("bump shader error", bumpShader.getLog());
 		bumpShader.begin();
 		bumpShader.setUniformf("u_ambient", new Color(0.05f, 0.05f, 0.1f, 1));
 		bumpShader.setUniformf("u_specularStrength", 0.7f);
@@ -268,7 +274,7 @@ public class Example extends ApplicationAdapter {
 		tripleOverlayShader = new ShaderProgram(Gdx.files.internal("tripleOverlay.vert").readString(),
 				Gdx.files.internal("tripleOverlay.frag").readString());
 		if (!tripleOverlayShader.isCompiled())
-			Gdx.app.log("triple overlay shader error", tripleOverlayShader.getLog());
+			Gdx.app.error("triple overlay shader error", tripleOverlayShader.getLog());
 		tripleOverlayAtlas = new TextureAtlas("multipageFruit.atlas");
 		TextureAtlasCacher.cacheRegions(tripleOverlayAtlas, tripleOverlayRegions, true);
 
@@ -279,6 +285,14 @@ public class Example extends ApplicationAdapter {
 
 		Gdx.input.setInputProcessor(new InputMultiplexer(stage, bumpInputAdapter));
 
+		Gdx.gl.glEnable(GLConstants.GL_POINT_SPRITE_OES);
+		if (Gdx.app.getType() == Application.ApplicationType.Desktop)
+			Gdx.gl.glEnable(GLConstants.GL_PROGRAM_POINT_SIZE);
+		Gdx.app.log("Min point size", Point.getMinimumPointSize() + "");
+		Gdx.app.log("Max point size", Point.getMaximumPointSize() + "");
+		Gdx.app.log("Min smooth point size", Point.getMinimumSmoothPointSize() + "");
+		Gdx.app.log("Max smooth point size", Point.getMaximumSmoothPointSize() + "");
+		Gdx.app.log("Point granularity", Point.getPointSizeGranularity() + "");
 	}
 
 	public void resize(int width, int height) {
@@ -336,17 +350,7 @@ public class Example extends ApplicationAdapter {
 				BumpQuad bumpQuad = (BumpQuad) bumpBatch.draw().shininess(30)
 						.textureRegion(bumpAtlas.findRegion("badlogic_diffuse"))
 						.textureRegion(bumpAtlas.findRegion("badlogic_norm")).rotation(20f * elapsed);
-				bumpQuad.centerOrigin().positionByOrigin(cam.position.x, cam.position.y); // OK
-				// to
-				// make
-				// changes
-				// as
-				// long
-				// as
-				// prior
-				// to
-				// any further calls to batch that
-				// provided it.
+				bumpQuad.centerOrigin().positionByOrigin(cam.position.x, cam.position.y);
 				bumpBatch.end();
 				break;
 			case Poly2D:
@@ -385,6 +389,20 @@ public class Example extends ApplicationAdapter {
 
 				break;
 			}
+			case Point3D:
+				pCam.position.rotate(Vector3.Z, Gdx.graphics.getDeltaTime() * 90f);
+				pCam.lookAt(0, 0, 0);
+				pCam.update();
+				for (Point3D point : point3ds) {
+					point3dSorter.add(point);
+				}
+				point3DBatch.setProjectionMatrix(pCam.combined);
+				point3DBatch.begin();
+				point3dShader.setUniformf("u_screenHeight", pCam.viewportHeight);
+				point3dShader.setUniformf("u_up", pCam.up);
+				point3dSorter.flush(point3DBatch);
+				point3DBatch.end();
+				break;
 			case SolidQuads:
 				solidQuadBatch.setProjectionMatrix(viewport.getCamera().combined);
 				solidQuadBatch.begin();
@@ -496,33 +514,32 @@ public class Example extends ApplicationAdapter {
 
 	public void dispose() {
 		Disposal.clear(this);
-
-		Array<Object> fieldChecks = new Array<>();
-		fieldChecks.add(texture);
-		fieldChecks.add(bumpBatch);
-		fieldChecks.add(poly2dBatch);
-		fieldChecks.add(skin);
-
-		for (int i = 0; i < fieldChecks.size; i++) {
-			if (fieldChecks.get(i) != null)
-				Gdx.app.error("Disposal check", "Field " + i + " is not null.");
-		}
 	}
 
-	int idx;
 	static final Vector3 tmp = new Vector3();
 
 	private Quad3D makeQuad3D(float radius, float height) {
 		Quad3D quad = new Quad3D();
-		if (idx % 2 == 0) {
+		if (randomBoolean()) {
 			quad.texture(egg).blend();
 		} else {
 			quad.texture(wheel).opaque();
 		}
 		tmp.set(radius * random(), 0, 0).rotate(Vector3.Y, random() * 360f).add(0, (random() - 0.5f) * height, 0);
-		quad.position(tmp).size(1, 1);
-		idx++;
+		quad.position(tmp).size(1f, 1f);
 		return quad;
+	}
+
+	private Point3D makePoint3D(float radius, float height) {
+		Point3D point = new Point3D();
+		if (randomBoolean()) {
+			point.texture(egg).blend();
+		} else {
+			point.texture(wheel).opaque();
+		}
+		tmp.set(radius * random(), 0, 0).rotate(Vector3.Y, random() * 360f).add(0, (random() - 0.5f) * height, 0);
+		point.position(tmp).size(1f);
+		return point;
 	}
 
 	static class TripleOverlayRegions {

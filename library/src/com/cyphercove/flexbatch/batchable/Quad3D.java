@@ -17,14 +17,12 @@
 package com.cyphercove.flexbatch.batchable;
 
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.cyphercove.flexbatch.Batchable;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
+import com.cyphercove.flexbatch.utils.Blending;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
 import com.cyphercove.flexbatch.utils.SortableBatchable;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
  * subclass would not be compatible with a FlexBatch that was instantiated for the base Sprite type.
  *
  * @author cypherdare */
-public class Quad3D extends Quad implements SortableBatchable {
+public class Quad3D extends Quad<Quad3D> implements SortableBatchable {
 
 	public float z;
 	public final @NotNull Quaternion rotation = new Quaternion();
@@ -54,40 +52,36 @@ public class Quad3D extends Quad implements SortableBatchable {
 	private static final Vector3 TMP2 = new Vector3();
 	private static final Vector3 TMP3 = new Vector3();
 
-	/** Commonly used blend function factor pairs, for convenience. */
-	public enum Blending {
-		/** GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA */
-		Alpha,
-		/** GL_ONE, GL_ONE_MINUS_SRC_ALPHA */
-		PremultipliedAlpha,
-		/** GL_ONE, GL_ONE */
-		Additive
-	}
-
 	public Quad3D () {
 	}
 
+	@Override
 	protected final boolean isPosition3D () {
 		return true;
 	}
 
+	@Override
 	protected boolean isTextureCoordinate3D () {
 		return false;
 	}
 
+	@Override
 	public boolean isOpaque () {
 		return opaque;
 	}
 
+	@Override
 	public float calculateDistanceSquared (Vector3 camPosition) {
 		return camPosition.dst2(x, y, z);
 	}
 
+	@Override
 	protected void prepareSharedContext (RenderContextAccumulator renderContext) {
 		super.prepareSharedContext(renderContext);
 		renderContext.setDepthTesting(true);
 	}
 
+	@Override
 	protected boolean prepareContext (RenderContextAccumulator renderContext, int remainingVertices, int remainingTriangles) {
 		boolean needsFlush = super.prepareContext(renderContext, remainingVertices, remainingTriangles);
 		needsFlush |= renderContext.setBlending(!opaque);
@@ -97,6 +91,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 		return needsFlush;
 	}
 
+	@Override
 	public void refresh () {
 		super.refresh();
 		z = 0;
@@ -133,19 +128,8 @@ public class Quad3D extends Quad implements SortableBatchable {
 	 * @return This object for chaining. */
 	public @NotNull Quad3D blend (Blending blending) {
 		opaque = false;
-		switch (blending) {
-		case Alpha:
-			srcBlendFactor = GL20.GL_SRC_ALPHA;
-			dstBlendFactor = GL20.GL_ONE_MINUS_SRC_ALPHA;
-			break;
-		case PremultipliedAlpha:
-			srcBlendFactor = GL20.GL_ONE;
-			dstBlendFactor = GL20.GL_ONE_MINUS_SRC_ALPHA;
-			break;
-		case Additive:
-			srcBlendFactor = dstBlendFactor = GL20.GL_ONE;
-			break;
-		}
+		srcBlendFactor = blending.srcBlendFactor;
+		dstBlendFactor = blending.dstBlendFactor;
 		return this;
 	}
 
@@ -292,6 +276,7 @@ public class Quad3D extends Quad implements SortableBatchable {
 		return this;
 	}
 
+	@Override
 	protected int apply (float[] vertices, int vertexStartingIndex, AttributeOffsets offsets, int vertexSize) {
 		super.apply(vertices, vertexStartingIndex, offsets, vertexSize);
 		float left = -width / 2f;
@@ -335,60 +320,4 @@ public class Quad3D extends Quad implements SortableBatchable {
 		return 4;
 	}
 
-	// Chain methods must be overridden to allow return of subclass type.
-
-	public @NotNull Quad3D texture (Texture texture) {
-		super.texture(texture);
-		return this;
-	}
-
-	public @NotNull Quad3D region (float u, float v, float u2, float v2) {
-		super.region(u, v, u2, v2);
-		return this;
-	}
-
-	public @NotNull Quad3D textureRegion (TextureRegion region) {
-		super.textureRegion(region);
-		return this;
-	}
-
-	public @NotNull Quad3D flip (boolean flipX, boolean flipY) {
-		super.flip(flipX, flipY);
-		return this;
-	}
-
-	public @NotNull Quad3D size (float width, float height) {
-		super.size(width, height);
-		return this;
-	}
-
-	public @NotNull Quad3D origin (float originX, float originY) {
-		super.origin(originX, originY);
-		return this;
-	}
-
-	public @NotNull Quad3D rotateCoordinates90 (boolean clockwise) {
-		super.rotateCoordinates90(clockwise);
-		return this;
-	}
-
-	public @NotNull Quad3D color (Color color) {
-		super.color(color);
-		return this;
-	}
-
-	public @NotNull Quad3D color (float r, float g, float b, float a) {
-		super.color(r, g, b, a);
-		return this;
-	}
-
-	public @NotNull Quad3D color (float floatBits) {
-		super.color(floatBits);
-		return this;
-	}
-
-	public @NotNull Quad3D scale (float scaleX, float scaleY) {
-		super.scale(scaleX, scaleY);
-		return this;
-	}
 }

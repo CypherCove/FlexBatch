@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* ******************************************************************************
  * Copyright 2017 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 package com.cyphercove.flexbatch.batchable;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -41,9 +42,10 @@ import java.util.Arrays;
  * addVertexAttributes()}.
  * <p>
  * A Quad has fixed size, so its indices do not need to be recalculated for every draw call.
- * 
+ *
+ * @param <T> The type returned by the chain methods. The object must be able to be cast to this type.
  * @author cypherdare */
-public abstract class Quad extends FixedSizeBatchable implements Poolable {
+public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable implements Poolable {
 	protected final @NotNull GLTexture[] textures;
 	protected final @NotNull Region2D[] regions;
 	private int regionIndex = -1;
@@ -65,22 +67,32 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 			regions[i] = new Region2D();
 	}
 
-	protected final void populateTriangleIndices (short[] triangles) {
-		BatchablePreparation.populateQuadrangleIndices(triangles);
+	@Override
+	protected int getPrimitiveType() {
+		return GL20.GL_TRIANGLES;
 	}
 
-	protected final int getTrianglesPerBatchable () {
+	@Override
+	protected final void populateIndices(short[] indices) {
+		BatchablePreparation.populateQuadrangleIndices(indices);
+	}
+
+	@Override
+	protected final int getPrimitivesPerBatchable() {
 		return 2;
 	}
 
+	@Override
 	protected final int getVerticesPerBatchable () {
 		return 4;
 	}
 
+	@Override
 	protected void addVertexAttributes (Array<VertexAttribute> attributes) {
 		BatchablePreparation.addBaseAttributes(attributes, getNumberOfTextures(), isPosition3D(), isTextureCoordinate3D());
 	}
 
+	@Override
 	protected int getNumberOfTextures () {
 		return 1;
 	}
@@ -88,7 +100,7 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 	@Override
 	public boolean hasEquivalentTextures(Batchable other) {
 		if (other instanceof Quad) {
-			Quad quad = (Quad)other;
+			Quad<?> quad = (Quad<?>)other;
 			if (getNumberOfTextures() == 1)
 				return quad.textures[0] == textures[0];
 			int count = Math.min(getNumberOfTextures(), quad.getNumberOfTextures());
@@ -114,6 +126,7 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 	 * superclass type. */
 	protected abstract boolean isTextureCoordinate3D ();
 
+	@Override
 	protected boolean prepareContext (RenderContextAccumulator renderContext, int remainingVertices, int remainingIndices) {
 		boolean textureChanged = false;
 		for (int i = 0; i < textures.length; i++) {
@@ -123,8 +136,9 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 		return textureChanged || remainingVertices < 4;
 	}
 
-	public void refresh () { // Does not reset textures, in the interest of speed. There is no need for the concept of default
-										// textures.
+	@Override
+	public void refresh () {
+		// Does not reset textures, in the interest of speed. There is no need for the concept of default textures.
 		x = y = originX = originY = 0;
 		coordinatesRotation = 0;
 		scaleX = scaleY = 1;
@@ -134,6 +148,7 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 	}
 
 	/** Resets the state of the object and drops Texture references to prepare it for returning to a {@link Pool}. */
+	@Override
 	public void reset () {
 		refresh();
 		Arrays.fill(textures, null);
@@ -144,11 +159,12 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 	 * <p>
 	 * This method must not be called in a Batchable that supports zero textures.
 	 * @return This object for chaining. */
-	public @NotNull Quad texture (GLTexture texture) {
+	public @NotNull T texture (GLTexture texture) {
 		regionIndex = (regionIndex + 1) % getNumberOfTextures();
 		textures[regionIndex] = texture;
 		regions[regionIndex].setFull();
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
 	/** Sets the UV region of the most recently applied texture. This must be called after a texture or texture region has been set
@@ -161,13 +177,14 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 	 * @param u2 The right side of the region.
 	 * @param v2 The bottom side of the region.
 	 * @return This object for chaining. */
-	public @NotNull Quad region (float u, float v, float u2, float v2) {
+	public @NotNull T region (float u, float v, float u2, float v2) {
 		Region2D region = regions[regionIndex];
 		region.u = u;
 		region.v = v;
 		region.u2 = u2;
 		region.v2 = v2;
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
 	/** Sets the UV region of the most recently applied texture, using texel units. This must be called after a Texture or
@@ -180,7 +197,7 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 	 * @param width The width of the region. May be negative to flip the region in place.
 	 * @param height The height of the region. May be negative to flip the region in place.
 	 * @return This object for chaining. */
-	public @NotNull Quad regionTexels (int x, int y, int width, int height) {
+	public @NotNull T regionTexels (int x, int y, int width, int height) {
 		GLTexture texture = textures[regionIndex];
 		float invTexWidth = 1f / texture.getWidth();
 		float invTexHeight = 1f / texture.getHeight();
@@ -192,77 +209,88 @@ public abstract class Quad extends FixedSizeBatchable implements Poolable {
 	 * <p>
 	 * This method must not be called in a Batchable that supports zero textures.
 	 * @return This object for chaining. */
-	public @NotNull Quad textureRegion (TextureRegion region) {
+	public @NotNull T textureRegion (TextureRegion region) {
 		regionIndex = (regionIndex + 1) % getNumberOfTextures();
 		textures[regionIndex] = region.getTexture();
 		regions[regionIndex].set(region);
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
 	/** Flips the UV region of the most recently applied texture. This must be called after a texture or region has been set with
 	 * {@link #texture(GLTexture)} or {@link #textureRegion(TextureRegion)}.
 	 * @return This object for chaining. */
-	public @NotNull Quad flip (boolean flipX, boolean flipY) {
+	public @NotNull T flip (boolean flipX, boolean flipY) {
 		regions[regionIndex].flip(flipX, flipY);
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
 	/** Flips the texture region(s) from their current state. Must be called after regions or texture regions have already been
 	 * set.
 	 * @return This object for chaining. */
-	public @NotNull Quad flipAll (boolean flipX, boolean flipY) {
+	public @NotNull T flipAll (boolean flipX, boolean flipY) {
 		for (Region2D region : regions) {
 			region.flip(flipX, flipY);
 		}
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
-	public @NotNull Quad size (float width, float height) {
+	public @NotNull T size (float width, float height) {
 		this.width = width;
 		this.height = height;
 		sizeSet = true;
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
 	/** Sets the center point for transformations (rotation and scale). For {@link Quad2D}, this is relative to the bottom left
 	 * corner of the texture region. For {@link Quad3D}, this is relative to the center of the texture region and is in the local
 	 * coordinate system.
 	 * @return This object for chaining. */
-	public @NotNull Quad origin (float originX, float originY) {
+	public @NotNull T origin (float originX, float originY) {
 		this.originX = originX;
 		this.originY = originY;
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
 	/** Rotates the texture region(s) 90 degrees in place by rotating the texture coordinates.
 	 * @return This object for chaining. */
-	public @NotNull Quad rotateCoordinates90 (boolean clockwise) {
+	public @NotNull T rotateCoordinates90 (boolean clockwise) {
 		coordinatesRotation += clockwise ? 1 : 3;
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
-	public @NotNull Quad color (Color color) {
+	public @NotNull T color (Color color) {
 		this.color = color.toFloatBits();
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
-	public @NotNull Quad color (float r, float g, float b, float a) {
+	public @NotNull T color (float r, float g, float b, float a) {
 		int intBits = (int)(255 * a) << 24 | (int)(255 * b) << 16 | (int)(255 * g) << 8 | (int)(255 * r);
 		color = NumberUtils.intToFloatColor(intBits);
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
-	public @NotNull Quad color (float floatBits) {
+	public @NotNull T color (float floatBits) {
 		color = floatBits;
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
-	public @NotNull Quad scale (float scaleX, float scaleY) {
+	public @NotNull T scale (float scaleX, float scaleY) {
 		this.scaleX = scaleX;
 		this.scaleY = scaleY;
-		return this;
+		//noinspection unchecked
+		return (T)this;
 	}
 
+	@Override
 	protected int apply (float[] vertices, int vertexStartingIndex, AttributeOffsets offsets, int vertexSize) {
 		if (!sizeSet && regions.length > 0) {
 			Region2D region = regions[0];

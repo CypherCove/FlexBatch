@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* ******************************************************************************
  * Copyright 2017 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,6 @@
  ******************************************************************************/
 package com.cyphercove.flexbatch.batchable;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.cyphercove.flexbatch.Batchable;
@@ -36,13 +33,15 @@ import org.jetbrains.annotations.NotNull;
  * subclass would not be compatible with a FlexBatch that was instantiated for the base Quad2D type.
  * 
  * @author cypherdare */
-public class Quad2D extends Quad {
+public class Quad2D extends Quad<Quad2D> {
 	public float rotation;
 
+	@Override
 	protected final boolean isPosition3D () {
 		return false;
 	}
 
+	@Override
 	protected boolean isTextureCoordinate3D () {
 		return false;
 	}
@@ -162,65 +161,4 @@ public class Quad2D extends Quad {
 		return 4;
 	}
 
-	// Chain methods must be overridden to allow return of subclass type.
-
-	public @NotNull Quad2D texture (Texture texture) {
-		super.texture(texture);
-		return this;
-	}
-
-	public @NotNull Quad2D region (float u, float v, float u2, float v2) {
-		super.region(u, v, u2, v2);
-		return this;
-	}
-
-	public @NotNull Quad2D textureRegion (TextureRegion region) {
-		super.textureRegion(region);
-		return this;
-	}
-
-	public @NotNull Quad2D flip (boolean flipX, boolean flipY) {
-		super.flip(flipX, flipY);
-		return this;
-	}
-
-	public @NotNull Quad2D flipAll (boolean flipX, boolean flipY) {
-		super.flipAll(flipX, flipY);
-		return this;
-	}
-
-	public @NotNull Quad2D size (float width, float height) {
-		super.size(width, height);
-		return this;
-	}
-
-	public @NotNull Quad2D origin (float originX, float originY) {
-		super.origin(originX, originY);
-		return this;
-	}
-
-	public @NotNull Quad2D rotateCoordinates90 (boolean clockwise) {
-		super.rotateCoordinates90(clockwise);
-		return this;
-	}
-
-	public @NotNull Quad2D color (Color color) {
-		super.color(color);
-		return this;
-	}
-
-	public @NotNull Quad2D color (float r, float g, float b, float a) {
-		super.color(r, g, b, a);
-		return this;
-	}
-
-	public @NotNull Quad2D color (float floatBits) {
-		super.color(floatBits);
-		return this;
-	}
-
-	public @NotNull Quad2D scale (float scaleX, float scaleY) {
-		super.scale(scaleX, scaleY);
-		return this;
-	}
 }

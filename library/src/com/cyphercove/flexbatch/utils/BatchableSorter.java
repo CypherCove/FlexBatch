@@ -37,7 +37,7 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 
 	protected final int opaqueInitialCapacityPerTexture;
 	private final ObjectMap<T, ObjectSet<T>> opaqueBatchables; // first entered to material group
-	private final Array<T> blendedBatchables;
+	public final Array<T> blendedBatchables;
 	private final Comparator<T> comparator;
 	private Camera camera;
 	/** The position of the set camera. Direct field access is provided for optimization. The reference should not be

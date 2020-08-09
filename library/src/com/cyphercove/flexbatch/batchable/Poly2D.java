@@ -15,7 +15,6 @@
  ******************************************************************************/
 package com.cyphercove.flexbatch.batchable;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -24,7 +23,7 @@ import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
 import org.jetbrains.annotations.NotNull;
 
-public class Poly2D extends Poly {
+public class Poly2D extends Poly<Poly2D> {
 	public float rotation;
 
 	@Override
@@ -37,11 +36,13 @@ public class Poly2D extends Poly {
 		return false;
 	}
 
+	@Override
 	protected void prepareSharedContext (RenderContextAccumulator renderContext) {
 		super.prepareSharedContext(renderContext);
 		renderContext.setDepthMasking(false);
 	}
 
+	@Override
 	public void refresh () {
 		super.refresh();
 		rotation = 0;
@@ -96,43 +97,6 @@ public class Poly2D extends Poly {
 		}
 
 		return numVertices;
-	}
-
-	// Chain methods must be overridden to allow return of subclass type.
-
-	public @NotNull Poly2D region (PolygonRegion region) {
-		super.region(region);
-		return this;
-	}
-
-	public @NotNull Poly2D size (float width, float height) {
-		super.size(width, height);
-		return this;
-	}
-
-	public @NotNull Poly2D origin (float originX, float originY) {
-		super.origin(originX, originY);
-		return this;
-	}
-
-	public @NotNull Poly2D color (Color color) {
-		super.color(color);
-		return this;
-	}
-
-	public @NotNull Poly2D color (float r, float g, float b, float a) {
-		super.color(r, g, b, a);
-		return this;
-	}
-
-	public @NotNull Poly2D color (float floatBits) {
-		super.color(floatBits);
-		return this;
-	}
-
-	public @NotNull Poly2D scale (float scaleX, float scaleY) {
-		super.scale(scaleX, scaleY);
-		return this;
 	}
 
 }
