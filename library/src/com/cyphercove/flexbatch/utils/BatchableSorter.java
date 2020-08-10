@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* ******************************************************************************
  * Copyright 2017 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,11 +38,8 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 	protected final int opaqueInitialCapacityPerTexture;
 	private final ObjectMap<T, ObjectSet<T>> opaqueBatchables; // first entered to material group
 	public final Array<T> blendedBatchables;
-	private final Comparator<T> comparator;
+	private final BatchableComparator comparator = new BatchableComparator();
 	private Camera camera;
-	/** The position of the set camera. Direct field access is provided for optimization. The reference should not be
-	 * directly changed to a different object. Use {@link #setCamera(Camera)} instead. */
-	protected @NotNull Vector3 cameraPosition;
 	private boolean needSort;
 
 	private final Pool<ObjectSet<T>> objectSetPool = new Pool<ObjectSet<T>>() {
@@ -51,10 +48,11 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 		}
 
 		protected ObjectSet<T> newObject () {
-			return new ObjectSet<T>(opaqueInitialCapacityPerTexture);
+			return new ObjectSet<>(opaqueInitialCapacityPerTexture);
 		}
 
 	};
+
 	/**
 	 * Construct a BatchableSorter suitable for rendering both opaque and blended batchables.
 	 *
@@ -90,12 +88,7 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 		for (int i = 0; i < opaqueInitialTextureCapacity; i++) { // seed the pool to avoid delay on first use
 			objectSetPool.free(objectSetPool.obtain());
 		}
-		blendedBatchables = new Array<T>(Math.max(32, blendedInitialCapacity));
-		comparator = new Comparator<T>() {
-			public int compare (T o1, T o2) {
-				return (int)Math.signum(o2.calculateDistanceSquared(cameraPosition) - o1.calculateDistanceSquared(cameraPosition));
-			}
-		};
+		blendedBatchables = new Array<>(Math.max(32, blendedInitialCapacity));
 	}
 
 	/** Clear the queue without drawing anything. */
@@ -143,7 +136,7 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 		if (batchable.isOpaque()) {
 			for (ObjectMap.Entry<T, ObjectSet<T>> entry : opaqueBatchables) {
 				if (batchable.hasEquivalentTextures(entry.key)) {
-					entry.value.add((T)batchable);
+					entry.value.add(batchable);
 					return;
 				}
 			}
@@ -168,10 +161,16 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 	 *
 	 * @param camera The camera to use for distance comparisons.
 	 * */
-	public void setCamera (Camera camera) {
-		if (camera == null)
-			throw new IllegalArgumentException("Camera must not be null.");
+	public void setCamera (@NotNull Camera camera) {
 		this.camera = camera;
-		cameraPosition = camera.position;
+		comparator.cameraPosition = camera.position;
+	}
+
+	private static class BatchableComparator implements Comparator<SortableBatchable> {
+		Vector3 cameraPosition = null;
+		@Override
+		public int compare(SortableBatchable o1, SortableBatchable o2) {
+			return Float.compare(o1.calculateDistanceSquared(cameraPosition), o2.calculateDistanceSquared(cameraPosition));
+		}
 	}
 }

@@ -9,6 +9,7 @@
  * **[Breaking]** Renamed `FixedSizeBatchable.populateTriangleIndices()` to `populateIndices()`. Renamed
  `FixedSizeBatchable.getTrianglesPerBatchable()` to `FixedSizeBatchable.getPrimitivesPerBatchable()`.
  * **[Breaking]** Moved `Quad3D.Blending` to `.utils.Blending`.
+ * **[Breaking]** Removed protected `BatchableSorter.cameraPosition` field.
 
 ### Version 1.2.2
  * Update to LibGDX 1.9.10
