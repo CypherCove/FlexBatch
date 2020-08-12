@@ -4,6 +4,8 @@
  * Added `FlexBatch.requireShader()` to obtain non-null `ShaderProgram` reference. `FlexBatch.getShader()` is now nullable 
  so `CompliantBatch.setShader()` will be considered nullable in Kotlin.
  * Added ability to create `Batchable`s that render as points or lines. Added `Point` and `Point3D` `Batchable`s.
+ * **[Breaking]** Added `Batchable.getPrimitiveType()` and `Batchable.getIndicesPerPrimitive()`. For equivalent behavior
+ to previous version, return `GL20.GL_TRIANGLES` and `3` respectively.
  * **[Breaking]** Added types to `Quad` and `Poly` that represent the returned type in chain methods. Effectively no change
  to `Poly2D`, `Quad2D`, or `Quad3D`, as they extend the base class with the appropriate types.
  * **[Breaking]** Renamed `FixedSizeBatchable.populateTriangleIndices()` to `populateIndices()`. Renamed

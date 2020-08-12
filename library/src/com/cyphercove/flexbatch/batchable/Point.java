@@ -42,7 +42,6 @@ import java.util.Arrays;
  * <p>
  * The shader used to draw a Point must be designed for use with {@code glPoint}s.
  *
- *
  * @param <T> The type returned by the chain methods. The object must be able to be cast to this type.
  * @author cypherdare */
 public abstract class Point<T> extends Batchable implements Poolable {

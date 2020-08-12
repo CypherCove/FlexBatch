@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
  * <p>
  * A Point is always drawn as a square, centered at its position.
  * <p>
+ * Point3D manages its own blending and ignores the FlexBatch's blend settings.
+ * <p>
  * It may be subclassed to create a Batchable class that supports zero or multiple textures and additional attributes--see
  * {@link #getNumberOfTextures()} and {@link #addVertexAttributes(com.badlogic.gdx.utils.Array) addVertexAttributes()}. Such a
  * subclass would not be compatible with a FlexBatch that was instantiated for the base Point2D type.

@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  * <p>
  * The default origin of a Quad3D is its center. Its origin is used for positioning, and as the center of rotation and scaling.
  * <p>
- * Quad3D manages its own blending, so calls to the FlexBatch's blend function setters will be ineffective.
+ * Quad3D manages its own blending and ignores the FlexBatch's blend settings.
  * <p>
  * It may be subclassed to create a Batchable class that supports multiple textures and additional attributes--see
  * {@link #getNumberOfTextures()} and {@link #addVertexAttributes(com.badlogic.gdx.utils.Array) addVertexAttributes()}. Such a
