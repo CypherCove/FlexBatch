@@ -279,15 +279,15 @@ public class Quad3D extends Quad<Quad3D> implements SortableBatchable {
 	@Override
 	protected int apply (float[] vertices, int vertexStartingIndex, AttributeOffsets offsets, int vertexSize) {
 		super.apply(vertices, vertexStartingIndex, offsets, vertexSize);
-		float left = -width / 2f;
-		float right = left + width;
-		float bottom = -height / 2f;
-		float top = bottom + height;
+		float left = (-width / 2f - originX) * scaleX;
+		float right = left + width * scaleX;
+		float bottom = (-height / 2f - originY) * scaleY;
+		float top = bottom + height * scaleY;
 
 		int i = vertexStartingIndex;
 
 		// bottom left
-		TMP1.set((left - originX) * scaleX, (bottom - originY) * scaleY, 0); // local vertex position
+		TMP1.set(left, bottom, 0f); // local vertex position
 		rotation.transform(TMP1); // local vertex position rotated
 		vertices[i] = TMP1.x + x; // world position
 		vertices[i + 1] = TMP1.y + y;
@@ -295,7 +295,7 @@ public class Quad3D extends Quad<Quad3D> implements SortableBatchable {
 		i += vertexSize;
 
 		// top left
-		TMP1.set((left - originX) * scaleX, (top - originY) * scaleY, 0);
+		TMP1.set(left, top, 0f);
 		rotation.transform(TMP1);
 		vertices[i] = TMP1.x + x;
 		vertices[i + 1] = TMP1.y + y;
@@ -303,7 +303,7 @@ public class Quad3D extends Quad<Quad3D> implements SortableBatchable {
 		i += vertexSize;
 
 		// top right
-		TMP1.set((right - originX) * scaleX, (top - originY) * scaleY, 0);
+		TMP1.set(right, top, 0f);
 		rotation.transform(TMP1);
 		vertices[i] = TMP1.x + x;
 		vertices[i + 1] = TMP1.y + y;
@@ -311,7 +311,7 @@ public class Quad3D extends Quad<Quad3D> implements SortableBatchable {
 		i += vertexSize;
 
 		// bottom right
-		TMP1.set((right - originX) * scaleX, (bottom - originY) * scaleY, 0);
+		TMP1.set(right, bottom, 0f);
 		rotation.transform(TMP1);
 		vertices[i] = TMP1.x + x;
 		vertices[i + 1] = TMP1.y + y;

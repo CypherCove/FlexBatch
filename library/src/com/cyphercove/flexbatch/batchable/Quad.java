@@ -245,9 +245,9 @@ public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable impleme
 		return (T)this;
 	}
 
-	/** Sets the center point for transformations (rotation and scale). For {@link Quad2D}, this is relative to the bottom left
-	 * corner of the texture region. For {@link Quad3D}, this is relative to the center of the texture region and is in the local
-	 * coordinate system.
+	/** Sets the center point for transformations (rotation and scale), and for positioning. For {@link Quad2D}, this is
+	 *  relative to the bottom left corner of the texture region. For {@link Quad3D}, this is relative to the center of
+	 *  the texture region and is in the local coordinate system.
 	 * @return This object for chaining. */
 	public @NotNull T origin (float originX, float originY) {
 		this.originX = originX;
