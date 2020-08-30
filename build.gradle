@@ -18,7 +18,7 @@ allprojects {
     version = '1.2.3'
 
     ext {
-        gdxVersion = '1.9.10'
+        gdxVersion = '1.9.11'
     }
 
     repositories {
@@ -27,6 +27,15 @@ allprojects {
         jcenter()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
+}
+
+project(":library") {
+    apply plugin: "java-library"
+
+    dependencies {
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api 'org.jetbrains:annotations:16.0.2'
     }
 }
 
@@ -39,14 +48,5 @@ project(":example") {
         implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
         implementation "com.cyphercove.covetools:covetools:1.2.2"
-    }
-}
-
-project(":library") {
-    apply plugin: "java-library"
-
-    dependencies {
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api 'org.jetbrains:annotations:16.0.2'
     }
 }

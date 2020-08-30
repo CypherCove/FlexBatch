@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* ******************************************************************************
  * Copyright 2017 See AUTHORS file.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,10 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Constructor;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.cyphercove.flexbatch.batchable.Quad3D;
 import com.cyphercove.flexbatch.Batchable.FixedSizeBatchable;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
@@ -136,7 +140,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         this.batchableType = batchableType;
 
         try {
-            internalBatchable = batchableType.newInstance();
+            internalBatchable = newObject(batchableType);
         } catch (Exception e) {
             throw new IllegalArgumentException("Batchable classes must be public and have an empty constructor.", e);
         }
@@ -194,7 +198,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         renderContext.begin();
         internalBatchable.prepareSharedContext(renderContext);
         renderContext.executeChanges();
-        shader.begin();
+        shader.bind();
         applyMatrices();
         applyTextureUniforms();
 
@@ -215,8 +219,6 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         // Avoid hanging onto native resource object references
         renderContext.clearAllTextureUnits();
         internalBatchable.reset();
-
-        shader.end();
     }
 
     /**
@@ -539,11 +541,10 @@ public class FlexBatch<T extends Batchable> implements Disposable {
             if (shader == null)
                 throw new IllegalStateException("Cannot set shader to null between begin() and end().");
             flush();
-            shader.end();
         }
         this.shader = shader;
         if (drawing) {
-            shader.begin();
+            shader.bind();
             applyMatrices();
             applyTextureUniforms();
         }
@@ -665,5 +666,25 @@ public class FlexBatch<T extends Batchable> implements Disposable {
 
     public void dispose () {
         mesh.dispose();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T newObject (Class<T> type) {
+        Constructor constructor;
+        try {
+            constructor = ClassReflection.getConstructor(type);
+        } catch (Exception ex1) {
+            try {
+                constructor = ClassReflection.getDeclaredConstructor(type);
+                constructor.setAccessible(true);
+            } catch (ReflectionException ex2) {
+                throw new GdxRuntimeException("Unable to obtain constructor for type " + type.getName());
+            }
+        }
+        try {
+            return (T)constructor.newInstance();
+        } catch (Exception ex) {
+            throw new GdxRuntimeException("Unable to create new instance for type " + type.getName(), ex);
+        }
     }
 }
