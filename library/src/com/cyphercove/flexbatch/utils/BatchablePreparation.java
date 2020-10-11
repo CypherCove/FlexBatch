@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* ******************************************************************************
  * Copyright 2017 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,6 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
-import org.jetbrains.annotations.NotNull;
 
 public final class BatchablePreparation {
 
@@ -71,7 +70,7 @@ public final class BatchablePreparation {
 		return sb.toString();
 	}
 
-	public static @NotNull String generateGenericFragmentShader (int textureCount) { // TODO default should only use first texture
+	public static String generateGenericFragmentShader (int textureCount) { // TODO default should only use first texture
 		boolean v3 = Gdx.gl30 != null;
 		String varying = v3 ? "in" : "varying";
 		String outColor = v3 ? "fragmentColor" : "gl_FragColor";

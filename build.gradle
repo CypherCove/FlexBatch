@@ -35,7 +35,6 @@ project(":library") {
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api 'org.jetbrains:annotations:16.0.2'
     }
 }
 

@@ -285,7 +285,7 @@ public class Example extends ApplicationAdapter {
 
 		Gdx.input.setInputProcessor(new InputMultiplexer(stage, bumpInputAdapter));
 
-		Gdx.gl.glEnable(GLConstants.GL_POINT_SPRITE_OES);
+		Gdx.gl.glEnable(0x8861); //GL_POINT_SPRITE_OES
 		if (Gdx.app.getType() == Application.ApplicationType.Desktop)
 			Gdx.gl.glEnable(GLConstants.GL_PROGRAM_POINT_SIZE);
 		Gdx.app.log("Min point size", Point.getMinimumPointSize() + "");

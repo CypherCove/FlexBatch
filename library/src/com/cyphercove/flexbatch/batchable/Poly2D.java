@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* ******************************************************************************
  * Copyright 2017 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
-import org.jetbrains.annotations.NotNull;
 
 public class Poly2D extends Poly<Poly2D> {
 	public float rotation;
@@ -50,7 +49,7 @@ public class Poly2D extends Poly<Poly2D> {
 
 	/** Sets the position of the bottom left of the texture region in world space.
 	 * @return This object for chaining. */
-	public @NotNull Poly2D position (float x, float y) {
+	public Poly2D position (float x, float y) {
 		this.x = x;
 		this.y = y;
 		return this;
@@ -58,13 +57,13 @@ public class Poly2D extends Poly<Poly2D> {
 
 	/** Sets the position of the bottom left of the texture region in world space.
 	 * @return This object for chaining. */
-	public @NotNull Poly2D position (Vector2 position) {
+	public Poly2D position (Vector2 position) {
 		x = position.x;
 		y = position.y;
 		return this;
 	}
 
-	public @NotNull Poly2D rotation (float rotation) {
+	public Poly2D rotation (float rotation) {
 		this.rotation = rotation;
 		return this;
 	}

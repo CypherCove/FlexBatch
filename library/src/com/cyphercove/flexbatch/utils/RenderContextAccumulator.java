@@ -19,8 +19,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.utils.IntMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Stores up pending GL state changes and textures to bind, and executes them on demand. Minimizes actual state changes.
  * Remembers and can restore state between uses.
@@ -38,7 +36,7 @@ public class RenderContextAccumulator {
 		int depthFunc;
 		float depthRangeNear, depthRangeFar;
 		int cullFace;
-		final @NotNull IntMap<GLTexture> textureUnits = new IntMap<GLTexture>(32);
+		final IntMap<GLTexture> textureUnits = new IntMap<GLTexture>(32);
 
 		public void applyDefaults () {
 			blending = depthTesting = culling = false;

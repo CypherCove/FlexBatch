@@ -24,7 +24,6 @@ import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.cyphercove.flexbatch.batchable.Quad2D;
 import com.cyphercove.flexbatch.utils.BatchablePreparation;
-import org.jetbrains.annotations.NotNull;
 
 /** A {@link FlexBatch} that implements the {@link Batch} interface, so it is compatible with Stage/Actor, BitmapFont,
  * ParticleEffect, Sprite, and NinePatch. It creates its own default ShaderProgram, which is owned and is disposed automatically
@@ -94,8 +93,6 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	/**
 	 * Returns the current ShaderProgram, which may be the default. Is never null.
 	 *
-	 * The return type is not marked as {@link NotNull} so Kotlin will not enforce nonnull values to be set with the
-	 * corresponding setter.
 	 * @return the ShaderProgram set for this batch, or the default if none is set.
 	 */
 	@Override
@@ -109,7 +106,7 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	 * @return the ShaderProgram set for this batch, or the default if none is set.
 	 */
 	@Override
-	public @NotNull ShaderProgram requireShader() {
+	public ShaderProgram requireShader() {
 		return getShader();
 	}
 
@@ -153,7 +150,7 @@ public class CompliantBatch<T extends Quad2D> extends FlexBatch<T> implements Ba
 	}
 
 	@Override
-	public @NotNull Color getColor () {
+	public Color getColor () {
 		int intBits = NumberUtils.floatToIntColor(color);
 		Color color = tempColor;
 		color.r = (intBits & 0xff) / 255f;

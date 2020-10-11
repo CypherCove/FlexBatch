@@ -30,7 +30,6 @@ import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.BatchablePreparation;
 import com.cyphercove.flexbatch.utils.Region2D;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -46,8 +45,8 @@ import java.util.Arrays;
  * @param <T> The type returned by the chain methods. The object must be able to be cast to this type.
  * @author cypherdare */
 public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable implements Poolable {
-	protected final @NotNull GLTexture[] textures;
-	protected final @NotNull Region2D[] regions;
+	protected final GLTexture[] textures;
+	protected final Region2D[] regions;
 	private int regionIndex = -1;
 	public float x, y, color = WHITE, originX, originY, scaleX = 1, scaleY = 1;
 	/** Width and height must be set with {@link #size(float, float)}. If they are not set, they default to the size of the first
@@ -159,7 +158,7 @@ public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable impleme
 	 * <p>
 	 * This method must not be called in a Batchable that supports zero textures.
 	 * @return This object for chaining. */
-	public @NotNull T texture (GLTexture texture) {
+	public T texture (GLTexture texture) {
 		regionIndex = (regionIndex + 1) % getNumberOfTextures();
 		textures[regionIndex] = texture;
 		regions[regionIndex].setFull();
@@ -177,7 +176,7 @@ public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable impleme
 	 * @param u2 The right side of the region.
 	 * @param v2 The bottom side of the region.
 	 * @return This object for chaining. */
-	public @NotNull T region (float u, float v, float u2, float v2) {
+	public T region (float u, float v, float u2, float v2) {
 		Region2D region = regions[regionIndex];
 		region.u = u;
 		region.v = v;
@@ -197,7 +196,7 @@ public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable impleme
 	 * @param width The width of the region. May be negative to flip the region in place.
 	 * @param height The height of the region. May be negative to flip the region in place.
 	 * @return This object for chaining. */
-	public @NotNull T regionTexels (int x, int y, int width, int height) {
+	public T regionTexels (int x, int y, int width, int height) {
 		GLTexture texture = textures[regionIndex];
 		float invTexWidth = 1f / texture.getWidth();
 		float invTexHeight = 1f / texture.getHeight();
@@ -209,7 +208,7 @@ public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable impleme
 	 * <p>
 	 * This method must not be called in a Batchable that supports zero textures.
 	 * @return This object for chaining. */
-	public @NotNull T textureRegion (TextureRegion region) {
+	public T textureRegion (TextureRegion region) {
 		regionIndex = (regionIndex + 1) % getNumberOfTextures();
 		textures[regionIndex] = region.getTexture();
 		regions[regionIndex].set(region);
@@ -220,7 +219,7 @@ public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable impleme
 	/** Flips the UV region of the most recently applied texture. This must be called after a texture or region has been set with
 	 * {@link #texture(GLTexture)} or {@link #textureRegion(TextureRegion)}.
 	 * @return This object for chaining. */
-	public @NotNull T flip (boolean flipX, boolean flipY) {
+	public T flip (boolean flipX, boolean flipY) {
 		regions[regionIndex].flip(flipX, flipY);
 		//noinspection unchecked
 		return (T)this;
@@ -229,7 +228,7 @@ public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable impleme
 	/** Flips the texture region(s) from their current state. Must be called after regions or texture regions have already been
 	 * set.
 	 * @return This object for chaining. */
-	public @NotNull T flipAll (boolean flipX, boolean flipY) {
+	public T flipAll (boolean flipX, boolean flipY) {
 		for (Region2D region : regions) {
 			region.flip(flipX, flipY);
 		}
@@ -237,7 +236,7 @@ public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable impleme
 		return (T)this;
 	}
 
-	public @NotNull T size (float width, float height) {
+	public T size (float width, float height) {
 		this.width = width;
 		this.height = height;
 		sizeSet = true;
@@ -249,7 +248,7 @@ public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable impleme
 	 *  relative to the bottom left corner of the texture region. For {@link Quad3D}, this is relative to the center of
 	 *  the texture region and is in the local coordinate system.
 	 * @return This object for chaining. */
-	public @NotNull T origin (float originX, float originY) {
+	public T origin (float originX, float originY) {
 		this.originX = originX;
 		this.originY = originY;
 		//noinspection unchecked
@@ -258,32 +257,32 @@ public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable impleme
 
 	/** Rotates the texture region(s) 90 degrees in place by rotating the texture coordinates.
 	 * @return This object for chaining. */
-	public @NotNull T rotateCoordinates90 (boolean clockwise) {
+	public T rotateCoordinates90 (boolean clockwise) {
 		coordinatesRotation += clockwise ? 1 : 3;
 		//noinspection unchecked
 		return (T)this;
 	}
 
-	public @NotNull T color (Color color) {
+	public T color (Color color) {
 		this.color = color.toFloatBits();
 		//noinspection unchecked
 		return (T)this;
 	}
 
-	public @NotNull T color (float r, float g, float b, float a) {
+	public T color (float r, float g, float b, float a) {
 		int intBits = (int)(255 * a) << 24 | (int)(255 * b) << 16 | (int)(255 * g) << 8 | (int)(255 * r);
 		color = NumberUtils.intToFloatColor(intBits);
 		//noinspection unchecked
 		return (T)this;
 	}
 
-	public @NotNull T color (float floatBits) {
+	public T color (float floatBits) {
 		color = floatBits;
 		//noinspection unchecked
 		return (T)this;
 	}
 
-	public @NotNull T scale (float scaleX, float scaleY) {
+	public T scale (float scaleX, float scaleY) {
 		this.scaleX = scaleX;
 		this.scaleY = scaleY;
 		//noinspection unchecked

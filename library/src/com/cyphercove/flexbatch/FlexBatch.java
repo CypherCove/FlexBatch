@@ -36,7 +36,6 @@ import com.cyphercove.flexbatch.batchable.Quad3D;
 import com.cyphercove.flexbatch.Batchable.FixedSizeBatchable;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Draws batched {@link Batchable} objects, optimizing the drawing process by combining them into a single Mesh. FlexBatch can be
@@ -76,7 +75,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FlexBatch<T extends Batchable> implements Disposable {
 
-    public final @NotNull Class<T> batchableType;
+    public final Class<T> batchableType;
     private final T internalBatchable;
     private boolean havePendingInternal;
     private final Mesh mesh;
@@ -130,7 +129,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      *                      to optimize this FlexBatch to draw only FixedSizeBatchables. If the primitive type of the
      *                      batchable type is {@link GL20#GL_POINTS}, this parameter is ignored.
      */
-    public FlexBatch (@NotNull Class<T> batchableType, int maxVertices, int maxPrimitives) {
+    public FlexBatch (Class<T> batchableType, int maxVertices, int maxPrimitives) {
         // 32767 is max vertex index.
         if (maxVertices > 32767)
             throw new IllegalArgumentException("Can't have more than 32767 vertices per batch: " + maxPrimitives);
@@ -232,7 +231,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      *
      * @return the render context, whose parameters may be set to affect drawing.
      */
-    public @NotNull RenderContextAccumulator getRenderContext () {
+    public RenderContextAccumulator getRenderContext () {
         return renderContext;
     }
 
@@ -247,7 +246,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      * <p>
      * Do not cache and reuse the returned Batchable.
      */
-    public @NotNull T draw () {
+    public T draw () {
         if (havePendingInternal) drawPending();
         havePendingInternal = true;
         internalBatchable.refresh();
@@ -525,7 +524,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      * @throws IllegalStateException if a ShaderProgram has not yet been assigned.
      * @return the ShaderProgram set for this batch.
      */
-    public @NotNull ShaderProgram requireShader () {
+    public ShaderProgram requireShader () {
         if (shader == null)
             throw new IllegalStateException("The ShaderProgram has not been assigned.");
         return shader;
@@ -599,11 +598,11 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         return renderContext.isBlendingEnabled();
     }
 
-    public @NotNull Matrix4 getProjectionMatrix () {
+    public Matrix4 getProjectionMatrix () {
         return projectionMatrix;
     }
 
-    public @NotNull Matrix4 getTransformMatrix () {
+    public  Matrix4 getTransformMatrix () {
         return transformMatrix;
     }
 

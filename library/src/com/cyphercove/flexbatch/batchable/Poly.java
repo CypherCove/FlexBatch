@@ -28,7 +28,6 @@ import com.cyphercove.flexbatch.Batchable;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.BatchablePreparation;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
-import org.jetbrains.annotations.NotNull;
 
 /** A Batchable supporting a single {@link PolygonRegion}, with color, position, scale, and an origin offset.
  *
@@ -111,7 +110,7 @@ public abstract class Poly<T extends Poly<T>> extends Batchable implements Poola
 
 	/** Sets the polygon region.
 	 * @return This object for chaining. */
-	public @NotNull T region (PolygonRegion region) {
+	public T region (PolygonRegion region) {
 		this.region = region;
 		numVertices = region.getVertices().length / 2;
 		numIndices = region.getTriangles().length;
@@ -119,7 +118,7 @@ public abstract class Poly<T extends Poly<T>> extends Batchable implements Poola
 		return (T)this;
 	}
 
-	public @NotNull T size (float width, float height) {
+	public T size (float width, float height) {
 		this.width = width;
 		this.height = height;
 		sizeSet = true;
@@ -131,33 +130,33 @@ public abstract class Poly<T extends Poly<T>> extends Batchable implements Poola
 	 * corner of the texture region. For {@link Quad3D}, this is relative to the center of the texture region and is in the local
 	 * coordinate system.
 	 * @return This object for chaining. */
-	public @NotNull T origin (float originX, float originY) {
+	public T origin (float originX, float originY) {
 		this.originX = originX;
 		this.originY = originY;
 		//noinspection unchecked
 		return (T)this;
 	}
 
-	public @NotNull T color (Color color) {
+	public T color (Color color) {
 		this.color = color.toFloatBits();
 		//noinspection unchecked
 		return (T)this;
 	}
 
-	public @NotNull T color (float r, float g, float b, float a) {
+	public T color (float r, float g, float b, float a) {
 		int intBits = (int)(255 * a) << 24 | (int)(255 * b) << 16 | (int)(255 * g) << 8 | (int)(255 * r);
 		color = NumberUtils.intToFloatColor(intBits);
 		//noinspection unchecked
 		return (T)this;
 	}
 
-	public @NotNull T color (float floatBits) {
+	public T color (float floatBits) {
 		color = floatBits;
 		//noinspection unchecked
 		return (T)this;
 	}
 
-	public @NotNull T scale (float scaleX, float scaleY) {
+	public T scale (float scaleX, float scaleY) {
 		this.scaleX = scaleX;
 		this.scaleY = scaleY;
 		//noinspection unchecked

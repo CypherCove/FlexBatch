@@ -22,7 +22,6 @@ import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.Blending;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
 import com.cyphercove.flexbatch.utils.SortableBatchable;
-import org.jetbrains.annotations.NotNull;
 
 /** A {@link Point} {@link Batchable Batchable} that supports a single texture at a time, with
  * three-dimensional position and color.
@@ -86,14 +85,14 @@ public class Point3D extends Point<Point3D> implements SortableBatchable {
 
 	/** Disables blending. Blending is disabled by default.
 	 * @return This object for chaining. */
-	public @NotNull Point3D opaque () {
+	public Point3D opaque () {
 		opaque = true;
 		return this;
 	}
 
 	/** Enables blending. Blending is disabled by default.
 	 * @return This object for chaining. */
-	public @NotNull Point3D blend () {
+	public Point3D blend () {
 		opaque = false;
 		return this;
 	}
@@ -109,7 +108,7 @@ public class Point3D extends Point<Point3D> implements SortableBatchable {
 
 	/** Enables blending and sets the blend function parameters to a commonly used pair. Blending is disabled by default.
 	 * @return This object for chaining. */
-	public @NotNull Point3D blend (Blending blending) {
+	public Point3D blend (Blending blending) {
 		opaque = false;
 		srcBlendFactor = blending.srcBlendFactor;
 		dstBlendFactor = blending.dstBlendFactor;
@@ -118,7 +117,7 @@ public class Point3D extends Point<Point3D> implements SortableBatchable {
 
 	/** Sets the position of the bottom left of the texture region in world space.
 	 * @return This object for chaining. */
-	public @NotNull Point3D position (float x, float y, float z) {
+	public Point3D position (float x, float y, float z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -127,7 +126,7 @@ public class Point3D extends Point<Point3D> implements SortableBatchable {
 
 	/** Sets the position of the bottom left of the texture region in world space.
 	 * @return This object for chaining. */
-	public @NotNull Point3D position (Vector3 position) {
+	public Point3D position (Vector3 position) {
 		x = position.x;
 		y = position.y;
 		z = position.z;

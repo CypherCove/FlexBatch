@@ -27,7 +27,6 @@ import com.cyphercove.flexbatch.Batchable;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.GLConstants;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
-import org.jetbrains.annotations.NotNull;
 
 import java.nio.FloatBuffer;
 import java.util.Arrays;
@@ -45,7 +44,7 @@ import java.util.Arrays;
  * @param <T> The type returned by the chain methods. The object must be able to be cast to this type.
  * @author cypherdare */
 public abstract class Point<T> extends Batchable implements Poolable {
-	protected final @NotNull GLTexture[] textures;
+	protected final GLTexture[] textures;
 	private int textureIndex = -1;
 	public float x, y, color = WHITE, size;
 	protected static final float WHITE = Color.WHITE.toFloatBits();
@@ -120,33 +119,33 @@ public abstract class Point<T> extends Batchable implements Poolable {
 	 * <p>
 	 * This method must not be called in a Batchable that supports zero textures.
 	 * @return This object for chaining. */
-	public @NotNull T texture (GLTexture texture) {
+	public T texture (GLTexture texture) {
 		textureIndex = (textureIndex + 1) % getNumberOfTextures();
 		textures[textureIndex] = texture;
 		//noinspection unchecked
 		return (T)this;
 	}
 
-	public @NotNull T size (float size) {
+	public T size (float size) {
 		this.size = size;
 		//noinspection unchecked
 		return (T)this;
 	}
 
-	public @NotNull T color (Color color) {
+	public T color (Color color) {
 		this.color = color.toFloatBits();
 		//noinspection unchecked
 		return (T)this;
 	}
 
-	public @NotNull T color (float r, float g, float b, float a) {
+	public T color (float r, float g, float b, float a) {
 		int intBits = (int)(255 * a) << 24 | (int)(255 * b) << 16 | (int)(255 * g) << 8 | (int)(255 * r);
 		color = NumberUtils.intToFloatColor(intBits);
 		//noinspection unchecked
 		return (T)this;
 	}
 
-	public @NotNull T color (float floatBits) {
+	public T color (float floatBits) {
 		color = floatBits;
 		//noinspection unchecked
 		return (T)this;

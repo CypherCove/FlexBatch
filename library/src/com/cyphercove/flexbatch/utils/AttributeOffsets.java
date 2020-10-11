@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* ******************************************************************************
  * Copyright 2017 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,14 +19,13 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.utils.ObjectIntMap;
-import org.jetbrains.annotations.NotNull;
 
 /** Provides fast and convenient access to VertexAttribute offsets, in float-size units.
  * 
  * @author cypherdare */
 public class AttributeOffsets {
 
-	public final @NotNull VertexAttributes attributes;
+	public final VertexAttributes attributes;
 	private final ObjectIntMap<String> byAlias;
 	private final int[] byIndex;
 	public final int position, color0, color1, color2, color3, textureCoordinate0, textureCoordinate1, textureCoordinate2,

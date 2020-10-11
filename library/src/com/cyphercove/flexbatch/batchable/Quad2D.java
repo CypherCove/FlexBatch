@@ -20,7 +20,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.cyphercove.flexbatch.Batchable;
 import com.cyphercove.flexbatch.utils.AttributeOffsets;
 import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
-import org.jetbrains.annotations.NotNull;
 
 /** A {@link Quad} {@link Batchable Batchable} that supports a single texture at a time, with
  * two-dimensional position and color. It is designed to be drawn in a 2D plane, and is commonly called a sprite.
@@ -58,7 +57,7 @@ public class Quad2D extends Quad<Quad2D> {
 
 	/** Sets the position of the bottom left of the texture region in world space.
 	 * @return This object for chaining. */
-	public @NotNull Quad2D position (float x, float y) {
+	public Quad2D position (float x, float y) {
 		this.x = x;
 		this.y = y;
 		return this;
@@ -66,13 +65,13 @@ public class Quad2D extends Quad<Quad2D> {
 
 	/** Sets the position of the bottom left of the texture region in world space.
 	 * @return This object for chaining. */
-	public @NotNull Quad2D position (Vector2 position) {
+	public Quad2D position (Vector2 position) {
 		x = position.x;
 		y = position.y;
 		return this;
 	}
 
-	public @NotNull Quad2D rotation (float rotation) {
+	public Quad2D rotation (float rotation) {
 		this.rotation = rotation;
 		return this;
 	}

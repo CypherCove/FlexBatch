@@ -25,7 +25,6 @@ import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.Pool;
 import com.cyphercove.flexbatch.Batchable;
 import com.cyphercove.flexbatch.FlexBatch;
-import org.jetbrains.annotations.NotNull;
 
 /** Sorts 3D {@link Batchable Batchables} to ensure proper render order before passing them to a {@link FlexBatch}.
  * <p>
@@ -153,7 +152,7 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 	 *
 	 * @return The current camera.
 	 */
-	public @NotNull Camera getCamera() {
+	public Camera getCamera() {
 		return camera;
 	}
 
@@ -161,7 +160,7 @@ public class BatchableSorter<T extends Batchable & SortableBatchable> {
 	 *
 	 * @param camera The camera to use for distance comparisons.
 	 * */
-	public void setCamera (@NotNull Camera camera) {
+	public void setCamera (Camera camera) {
 		this.camera = camera;
 		comparator.cameraPosition = camera.position;
 	}
