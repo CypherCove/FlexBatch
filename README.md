@@ -4,11 +4,15 @@ FlexBatch is a library for [LibGDX](https://github.com/libgdx/libgdx) used for b
 ## Project Dependency
 The current version of FlexBatch is available via JCenter. **Note the new group ID! FlexBatch has moved as of the 1.2.0 version.**
 
-    compile "com.cyphercove.flexbatch:flexbatch:1.2.2"
+    compile "com.cyphercove.flexbatch:flexbatch:1.2.3"
+    
+To use with GWT, add this to the `.gwt.xml` file:
 
-Version 1.2.2 uses LibGDX 1.9.10. FlexBatch does not (yet) support GWT.
+    <inherits name="com.cyphercove.flexbatch"/>
+    
+[![LibGDX](https://img.shields.io/badge/libgdx-1.9.11-red.svg)](http://www.libgdx.com/)
 
-See [CHANGES.md](Changes.md) for the change log, which lists breaking changes and LibGDX version increases.
+See [CHANGES.md](Changes.md) for the change log, which lists breaking changes and libGDX version increases.
 
 ## Basic Usage
 A **FlexBatch** is capable of drawing a specific type of **Batchable**, so it is instantiated using that Batchable. For example, to create a FlexBatch that can draw the included **Quad2D** type of Batchable:
