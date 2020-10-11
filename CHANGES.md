@@ -1,3 +1,5 @@
+### Version 1.2.4
+
 ### Version 1.2.3
  * Updated to libGDX 1.9.11
  * Removed nullability annotations to support GWT.
