@@ -116,7 +116,9 @@ public abstract class Batchable implements Poolable {
 	 *     <li>{@link GL20#GL_TRIANGLES}</li>
 	 * </ul>
 	 */
-	protected abstract int getPrimitiveType ();
+	protected int getPrimitiveType () {
+		return GL20.GL_TRIANGLES;
+	}
 
 	/** @return The number of indices used for each OpenGL primitive, where primitive type is determined by
 	 * {@link #getPrimitiveType()}. Since {@link com.badlogic.gdx.graphics.GL20#GL_POINTS GL20.GL_POINTS} do not use
