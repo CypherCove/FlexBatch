@@ -43,7 +43,7 @@ import java.util.Arrays;
  *
  * @param <T> The type returned by the chain methods. The object must be able to be cast to this type.
  * @author cypherdare */
-public abstract class Point<T> extends Batchable implements Poolable {
+public abstract class Point<T> extends Batchable {
 	protected final GLTexture[] textures;
 	private int textureIndex = -1;
 	public float x, y, color = WHITE, size;

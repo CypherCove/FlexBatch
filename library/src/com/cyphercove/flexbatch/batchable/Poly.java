@@ -33,7 +33,7 @@ import com.cyphercove.flexbatch.utils.RenderContextAccumulator;
  *
  * @param <T> The type returned by the chain methods. The object must be able to be cast to this type.
  * @author cypherdare */
-public abstract class Poly<T extends Poly<T>> extends Batchable implements Poolable {
+public abstract class Poly<T extends Poly<T>> extends Batchable {
 	protected PolygonRegion region;
 	protected int numVertices, numIndices;
 	public float x, y, color = WHITE, originX, originY, scaleX = 1, scaleY = 1;

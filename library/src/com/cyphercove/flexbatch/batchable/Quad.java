@@ -44,7 +44,7 @@ import java.util.Arrays;
  *
  * @param <T> The type returned by the chain methods. The object must be able to be cast to this type.
  * @author cypherdare */
-public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable implements Poolable {
+public abstract class Quad<T extends Quad<T>> extends FixedSizeBatchable {
 	protected final GLTexture[] textures;
 	protected final Region2D[] regions;
 	private int regionIndex = -1;
