@@ -188,6 +188,42 @@ public abstract class Batchable implements Poolable {
 
 			return model.length;
 		}
+
+		/**
+		 * Called by FlexBatch on a single instance of a FixedSizeBatchable to set up the elements of the vertices
+		 * array that are the same for every Batchable instance. For example, if a custom batchable uses the same
+		 * texture coordinates for every instance, they could be set here instead of in
+		 * {@link #apply(float[], int, AttributeOffsets, int)} to avoid setting them on the vertices array every time
+		 * one is drawn.
+		 * <p>
+		 * If this method is overridden, {@link #isApplyAllOptimized()} must also be overridden to return true.
+		 * <p>
+		 * If a FixedSizeBatchable uses this optimization, it is incompatible with a FlexBatch that has not been
+		 * constructed for optimization for solely FixedSizeBatchables (by passing 0 as the {@code maxPrimitives}
+		 * constructor parameter).
+		 * <p>
+		 * When this method is overridden, it is responsible for setting the values of the common vertex attributes for
+		 * the entire vertices array. The vertex attributes set here can then be omitted from being set in
+		 * {@link #apply(float[], int, AttributeOffsets, int)}.
+		 * @param vertices Vertex data of the backing Mesh.
+		 * @param offsets The offsets of the vertex attributes.
+		 * @param vertexSize The size of a vertex in floats.
+		 */
+		protected void applyAll (float[] vertices, AttributeOffsets offsets, int vertexSize) {
+		}
+
+		/**
+		 * Determines whether the FlexBatch will use the optimization indicated by
+		 * {@link #applyAll(float[], AttributeOffsets, int)}. If a FixedSizeBatchable uses this optimization, it is
+		 * incompatible with a FlexBatch that has not been constructed for optimization for solely FixedSizeBatchables
+		 * (by passing 0 as the {@code maxPrimitives} constructor parameter).
+		 * @return true if {@link #applyAll(float[], AttributeOffsets, int)} is overridden, and therefore the
+		 * FixedSizeBatchable requires a FlexBatch that has not been constructed for optimization for solely
+		 * FixedSizeBatchables.
+		 */
+		protected boolean isApplyAllOptimized() {
+			return false;
+		}
 	}
 
 }

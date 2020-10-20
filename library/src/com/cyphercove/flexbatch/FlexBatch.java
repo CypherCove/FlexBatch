@@ -154,6 +154,8 @@ public class FlexBatch<T extends Batchable> implements Disposable {
         primitiveType = internalBatchable.getPrimitiveType();
         usesIndices = internalBatchable.getIndicesPerPrimitive() > 0;
         fixedIndices = usesIndices && internalBatchable instanceof FixedSizeBatchable && maxPrimitives == 0;
+        boolean usesFixedApplyAllOptimization = internalBatchable instanceof FixedSizeBatchable &&
+                ((FixedSizeBatchable) internalBatchable).isApplyAllOptimized();
 
         if (fixedIndices) {
             FixedSizeBatchable fixedSizeBatchable = (FixedSizeBatchable) internalBatchable;
@@ -164,9 +166,17 @@ public class FlexBatch<T extends Batchable> implements Disposable {
             indicesPerBatchable = fixedSizeBatchable.getPrimitivesPerBatchable() * 3;
             indices = new short[maxIndices];
             fixedSizeBatchable.populateIndices(indices);
+            if (usesFixedApplyAllOptimization) {
+                fixedSizeBatchable.applyAll(vertices, attributeOffsets, vertexSize);
+            }
         } else {
-            if (usesIndices && maxPrimitives == 0)
+            if (usesIndices && maxPrimitives == 0) {
                 throw new IllegalArgumentException("maxPrimitives must be greater than 0 if batchableType is not a FixedSizeBatchable");
+            }
+            if (usesFixedApplyAllOptimization) {
+                throw new IllegalArgumentException("A FixedSizeBatchable that uses the applyAll optimization (by overriding applyAll) " +
+                        "requires the FlexBatch to be instantiated with maxPrimitives of 0.");
+            }
             this.maxVertices = maxVertices;
             maxIndices = maxPrimitives * internalBatchable.getIndicesPerPrimitive();
             indices = new short[maxIndices];
