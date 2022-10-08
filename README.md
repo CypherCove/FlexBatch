@@ -7,7 +7,7 @@ FlexBatch is a library for [LibGDX](https://github.com/libgdx/libgdx) used for b
 ## Project Dependency
 The current version of FlexBatch is available via [JitPack](https://jitpack.io/#CypherCove/FlexBatch/).
 
-    implementation "com.cyphercove.flexbatch:flexbatch:1.2.3"
+    implementation "com.github.CypherCove:FlexBatch:1.2.3"
     
 To use with GWT, add this to the `.gwt.xml` file:
 
