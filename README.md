@@ -1,13 +1,13 @@
 # FlexBatch
 FlexBatch is a library for [LibGDX](https://github.com/libgdx/libgdx) used for batching many small custom objects optimally. It can be used as a flexible version of SpriteBatch, but where the sprites can have custom parameters, multi-texturing, bump-mapped lighting, etc. It can also be used for small objects in 3D (for example, a flexible version of DecalBatch).
 
-[![JitPack](https://img.shields.io/badge/JitPack-1.2.4-blue.svg)](https://jitpack.io/#CypherCove/FlexBatch/)
+[![JitPack](https://img.shields.io/badge/JitPack-1.2.5-blue.svg)](https://jitpack.io/#CypherCove/FlexBatch/)
 [![libGDX](https://img.shields.io/badge/libgdx-1.9.11-red.svg)](http://www.libgdx.com/)
 
 ## Project Dependency
 The current version of FlexBatch is available via [JitPack](https://jitpack.io/#CypherCove/FlexBatch/).
 
-    implementation "com.github.CypherCove:FlexBatch:1.2.4"
+    implementation "com.github.CypherCove:FlexBatch:1.2.5"
     
 To use with GWT, add this to the `.gwt.xml` file:
 
