@@ -1,3 +1,5 @@
+### Version 1.2.5
+
 ### Version 1.2.4
  * Exposed an optional optimization for custom batchables who have vertex attributes that never change
  regardless of what is drawn. For example, quads that always share a full-screen texture use the same
