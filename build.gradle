@@ -23,6 +23,7 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven { url = "https://jitpack.io" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
@@ -44,6 +45,6 @@ project(":example") {
         implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
-        implementation "com.cyphercove.covetools:covetools:1.2.2"
+        implementation "com.github.CypherCove.CoveTools:covetools:1.2.9"
     }
 }
