@@ -1,13 +1,13 @@
 # FlexBatch
 FlexBatch is a library for [LibGDX](https://github.com/libgdx/libgdx) used for batching many small custom objects optimally. It can be used as a flexible version of SpriteBatch, but where the sprites can have custom parameters, multi-texturing, bump-mapped lighting, etc. It can also be used for small objects in 3D (for example, a flexible version of DecalBatch).
 
-[![JitPack](https://img.shields.io/badge/JitPack-1.2.5-blue.svg)](https://jitpack.io/#CypherCove/FlexBatch/)
-[![libGDX](https://img.shields.io/badge/libgdx-1.9.11-red.svg)](http://www.libgdx.com/)
+![Maven Central](https://img.shields.io/maven-central/v/com.cyphercove.flexbatch/flexbatch?color=6d7ac5)
+![libGDX](https://img.shields.io/badge/libgdx-1.12.0-e74a45?link=http%3A%2F%2Fwww.libgdx.com%2F)
 
 ## Project Dependency
-The current version of FlexBatch is available via [JitPack](https://jitpack.io/#CypherCove/FlexBatch/).
+As of 1.2.6, FlexBatch is available on Maven Central.
 
-    implementation "com.github.CypherCove:FlexBatch:1.2.5"
+    implementation "com.cyphercove.flexbatch:flexbatch:1.2.6"
     
 To use with GWT, add this to the `.gwt.xml` file:
 
@@ -147,5 +147,5 @@ A `FlexBatch<Quad2D>` is capable of drawing Poly2D if a non-zero value was provi
 ## Custom Batchables
 You can also write your own subclass of Batchable or FixedSizeBatchable in order to make optimizations over the included classes, or to batch other shapes, such as 3D tetrahedra or 2D  parallelograms. Look over the Javadocs for the Batchable class and browse the Quad source code for hints on how to implement a Batchable class from scratch.
 
-### Philosophy
+### Design strategy
 FlexBatch is meant to provide flexibility to draw almost anything, so it is inherently more complicated than SpriteBatch. To reduce complexity and promote customization, minimal public methods are exposed. This is why Batchable is an abstract class rather than interface, and why the included Batchables use chained method calls for parameters instead of a bunch of overloaded draw methods like SpriteBatch has. Performance is important, but flexibility generally comes first, because FlexBatch's purpose is to do what the highly optimized SpriteBatch cannot do with its limited scope. The included Batchables can be customized and used quickly, leaving open the possibility for a specific, highly optimized implementation to be dropped in by users as needed.

@@ -17,13 +17,12 @@ allprojects {
     version = '1.2.6'
 
     ext {
-        gdxVersion = '1.9.11'
+        gdxVersion = '1.12.0'
     }
 
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { url = "https://jitpack.io" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
@@ -45,6 +44,6 @@ project(":example") {
         implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
-        implementation "com.github.CypherCove.CoveTools:covetools:1.2.9"
+        implementation "com.cyphercove.covetools:covetools:1.2.10"
     }
 }

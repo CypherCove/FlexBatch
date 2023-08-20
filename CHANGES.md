@@ -1,4 +1,5 @@
 ### Version 1.2.6
+ * Updated to libGDX 1.12.0
 
 ### Version 1.2.5
  * Exposed an optional optimization for custom batchables who have vertex attributes that never change
