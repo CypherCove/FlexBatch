@@ -196,7 +196,7 @@ public class Example extends ApplicationAdapter {
 			quad2ds.add(sprite);
 		}
 
-		solidQuadBatch = new FlexBatch<>(SolidQuad.class, 10, 0);
+		solidQuadBatch = new FlexBatch<>(SolidQuad.class, SolidQuad::new, 10, 0);
 		solidShader = new ShaderProgram(BatchablePreparation.generateGenericVertexShader(0),
 				BatchablePreparation.generateGenericFragmentShader(0));
 		solidQuadBatch.setShader(solidShader);
@@ -214,7 +214,7 @@ public class Example extends ApplicationAdapter {
 		pCam.position.set(0, 20, -20);
 		pCam.lookAt(0, 0, 0);
 		pCam.update();
-		quad3dBatch = new FlexBatch<>(Quad3D.class, 4000, 0);
+		quad3dBatch = new FlexBatch<>(Quad3D.class, Quad3D::new, 4000, 0);
 		quad3dBatch.setShader(typicalShader);
 		quad3dSorter = new BatchableSorter<>(pCam);
 		for (int i = 0; i < 500; i++) {
@@ -225,25 +225,24 @@ public class Example extends ApplicationAdapter {
 				Gdx.files.internal("point3d.frag").readString());
 		if (!point3dShader.isCompiled())
 			Gdx.app.error("point3d shader error", point3dShader.getLog());
-		point3DBatch = new FlexBatch<>(Point3D.class, 1000, 0);
+		point3DBatch = new FlexBatch<>(Point3D.class, Point3D::new,  1000, 0);
 		point3DBatch.setShader(point3dShader);
 		point3dSorter = new BatchableSorter<>(pCam);
 		for (int i = 0; i < 500; i++) {
 			point3ds.add(makePoint3D(10, 40));
 		}
 
-		poly2dBatch = new FlexBatch<>(Poly2D.class, 1000, 2000);
+		poly2dBatch = new FlexBatch<>(Poly2D.class, Poly2D::new, 1000, 2000);
 		poly2dBatch.setShader(typicalShader);
 
 		bumpShader = new ShaderProgram(Gdx.files.internal("bump.vert").readString(),
 				Gdx.files.internal("bump.frag").readString());
 		if (!bumpShader.isCompiled())
 			Gdx.app.error("bump shader error", bumpShader.getLog());
-		bumpShader.begin();
+		bumpShader.bind();
 		bumpShader.setUniformf("u_ambient", new Color(0.05f, 0.05f, 0.1f, 1));
 		bumpShader.setUniformf("u_specularStrength", 0.7f);
 		bumpShader.setUniformf("u_attenuation", 0.002f);
-		bumpShader.end();
 		bumpAtlas = new TextureAtlas("normalMappedSprites.atlas");
 		for (int i = 0; i < 6; i++) {
 			String baseName;
@@ -268,7 +267,7 @@ public class Example extends ApplicationAdapter {
 			quad.centerOrigin();
 			bumpQuads.add(quad);
 		}
-		bumpBatch = new FlexBatch<>(BumpQuad.class, 100, 0);
+		bumpBatch = new FlexBatch<>(BumpQuad.class, BumpQuad::new, 100, 0);
 		bumpBatch.setShader(bumpShader);
 
 		tripleOverlayShader = new ShaderProgram(Gdx.files.internal("tripleOverlay.vert").readString(),
@@ -278,7 +277,7 @@ public class Example extends ApplicationAdapter {
 		tripleOverlayAtlas = new TextureAtlas("multipageFruit.atlas");
 		TextureAtlasCacher.cacheRegions(tripleOverlayAtlas, tripleOverlayRegions, true);
 
-		tripleOverlayBatch = new FlexBatch<>(TripleQuad.class, 100, 0);
+		tripleOverlayBatch = new FlexBatch<>(TripleQuad.class, TripleQuad::new, 100, 0);
 		tripleOverlayBatch.setShader(tripleOverlayShader);
 
 		setupUI();

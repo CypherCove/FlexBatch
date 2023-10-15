@@ -1,3 +1,9 @@
+### Version 1.2.7
+ * Added FlexBatch constructor that takes a Batchable provider parameter instead of creating the batchaable
+instance with reflection. This ensures the constructor is called in code, so it will not be removed
+by minification (Proguard/R8).
+ * Deprecated the original FlexBatch constructor. 
+
 ### Version 1.2.6
  * Updated to libGDX 1.12.0
 

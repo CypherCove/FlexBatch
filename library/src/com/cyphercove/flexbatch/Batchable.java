@@ -226,4 +226,16 @@ public abstract class Batchable implements Poolable {
 		}
 	}
 
+	/**
+	 * Functional interface used to instantiate a Batchable of the given type with no arguments.
+	 * Used by {@link FlexBatch} to create its internal template Batchable.
+	 * @param <T> The type of Batchable created by this provider.
+	 */
+	public interface Provider<T extends Batchable> {
+		/**
+		 * Creates a new Batchable instance.
+		 * @return A new Batchable instance.
+		 */
+		public T create();
+	}
 }

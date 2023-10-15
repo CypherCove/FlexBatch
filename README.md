@@ -18,7 +18,7 @@ See [CHANGES.md](CHANGES.md) for the change log, which lists breaking changes an
 ## Basic Usage
 A **FlexBatch** is capable of drawing a specific type of **Batchable**, so it is instantiated using that Batchable. For example, to create a FlexBatch that can draw the included **Quad2D** type of Batchable:
 
-    FlexBatch<Quad2D> quad2dBatch = new FlexBatch<Quad2D>(Quad2D.class, 1000, 0);
+    FlexBatch<Quad2D> quad2dBatch = new FlexBatch<Quad2D>(Quad2D.class, Quad2D::new, 1000, 0);
     
 `0` can be used for the max triangles parameter to indicate that all Batchables drawn with this FlexBatch will be of equal size, which allows for some optimizations. This is only allowed if the Batchable is a descendant of FixedSizeBatchable. Of the included Batchable implementations, the quads are fixed size compatible, and the polys are not.
 

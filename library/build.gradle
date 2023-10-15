@@ -7,29 +7,19 @@ plugins {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_7
     targetCompatibility = JavaVersion.VERSION_1_7
+    withJavadocJar()
+    withSourcesJar()
 }
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
 
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    archiveClassifier = 'sources'
-}
-
-task javadocJar(type: Jar) {
-    from javadoc
-    archiveClassifier = 'javadoc'
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifactId = 'flexbatch'
             from components.java
-            artifact sourcesJar
-            artifact javadocJar
             pom {
                 name = 'FlexBatch'
                 description = 'A library for batch drawing custom types of sprites or small meshes in LibGDX.'

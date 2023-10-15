@@ -128,8 +128,39 @@ public class FlexBatch<T extends Batchable> implements Disposable {
      * @param maxPrimitives The number of OpenGL primitives (lines or triangles) this FlexBatch can batch at once, or 0
      *                      to optimize this FlexBatch to draw only FixedSizeBatchables. If the primitive type of the
      *                      batchable type is {@link GL20#GL_POINTS}, this parameter is ignored.
+     *
+     * @deprecated This constructor creates the internal Batchable instance using reflection, which
+     * may create issues with minification (Proguard or R8) if the batchable class is obfuscated.
      */
-    public FlexBatch (Class<T> batchableType, int maxVertices, int maxPrimitives) {
+    public FlexBatch (final Class<T> batchableType, int maxVertices, int maxPrimitives) {
+        this(batchableType, new Batchable.Provider<T>() {
+            @Override
+            public T create() {
+                try {
+                    return newObject(batchableType);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Batchable classes must be public and have an empty constructor.", e);
+                }
+            }
+        }, maxVertices, maxPrimitives);
+    }
+
+        /**
+         * Construct a FlexBatch capable of drawing the given Batchable type and other compatible Batchables (ones with the same + *
+         * VertexAttributes or subset of beginning VertexAttributes). The FlexBatch will not be limited to FixedSizeBatchables.
+         *
+         * @param batchableType The type of Batchable that defines the VertexAttributes supported by this FlexBatch, and the + *
+         *                      default Batchable type drawn by the {@link #draw()} method.
+         * @param provider      Functional interface that generates a new instance of the Batchable type. Used to generate an
+         *                      internal Batchable template.
+         * @param maxVertices   The number of vertices this FlexBatch can batch at once. Maximum of 32767. If the Batchable is a
+         *                      FixedSizeBatchable and 0 is used for {@code maxPrimitives}, this value will be rounded down
+         *                      to a multiple of the Batchable's size.
+         * @param maxPrimitives The number of OpenGL primitives (lines or triangles) this FlexBatch can batch at once, or 0
+         *                      to optimize this FlexBatch to draw only FixedSizeBatchables. If the primitive type of the
+         *                      batchable type is {@link GL20#GL_POINTS}, this parameter is ignored.
+         */
+    public FlexBatch (Class<T> batchableType, Batchable.Provider<T> provider, int maxVertices, int maxPrimitives) {
         // 32767 is max vertex index.
         if (maxVertices > 32767)
             throw new IllegalArgumentException("Can't have more than 32767 vertices per batch: " + maxPrimitives);
@@ -137,12 +168,7 @@ public class FlexBatch<T extends Batchable> implements Disposable {
             throw new IllegalArgumentException("Can't use an abstract batchableType");
 
         this.batchableType = batchableType;
-
-        try {
-            internalBatchable = newObject(batchableType);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Batchable classes must be public and have an empty constructor.", e);
-        }
+        internalBatchable = provider.create();
 
         Array<VertexAttribute> attributesArray = new Array<>(true, 10, VertexAttribute.class);
         internalBatchable.addVertexAttributes(attributesArray);
